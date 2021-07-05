@@ -1,7 +1,10 @@
 package com.akarinti.preapproved.service;
 
+import com.akarinti.preapproved.configuration.jwt.SessionAuthenticationProvider;
 import com.akarinti.preapproved.configuration.jwt.TokenProvider;
-import com.akarinti.preapproved.jpa.entity.UserBCA;
+import com.akarinti.preapproved.dto.authentication.ProfileUserDTO;
+import com.akarinti.preapproved.dto.authentication.SignInRequestDTO;
+import com.akarinti.preapproved.dto.authentication.SignInResponseDTO;
 import com.akarinti.preapproved.jpa.repository.UserBCARepository;
 import com.akarinti.preapproved.utils.WebServiceUtil;
 import com.akarinti.preapproved.utils.apiresponse.BCAOauth2Response;
@@ -11,17 +14,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.intercept.RunAsUserToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -38,8 +44,6 @@ import java.util.*;
 @Transactional
 public class SignInService implements UserDetailsService {
 
-    public static final Logger logger = LoggerFactory.getLogger(SignInService.class);
-
     @Autowired
     @Qualifier("passwordEncoder")
     PasswordEncoder passwordEncoder;
@@ -47,11 +51,11 @@ public class SignInService implements UserDetailsService {
     @Autowired
     UserBCARepository userBCARepository;
 
-//    @Autowired
-//    TokenProvider tokenProvider;
-//
-//    @Autowired
-//    AuthenticationManager authenticationManager;
+    @Autowired
+    TokenProvider tokenProvider;
+
+    @Autowired
+    SessionAuthenticationProvider sessionAuthenticationProvider;
 
     private static String httpMethod;
     @Value("${oauth.httpMethod}")
@@ -72,15 +76,31 @@ public class SignInService implements UserDetailsService {
     }
 
 
-
-
-
-    public String getUsername(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-            throw new RuntimeException("User is not authenticated");
+    public SignInResponseDTO loginBySession(String sessionId) {
+        //dummy, will be replaced with a real one
+        if(!sessionId.equals("dummy")){
+            return null;
         }
-        return authentication.getName();
+
+        Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+
+        User userPrincipal = new User(sessionId, "", true, true, true, true, authorities);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userPrincipal, sessionId, authorities);
+        final Authentication authentication = sessionAuthenticationProvider.authenticate(authenticationToken);
+
+        String newAccessToken = tokenProvider.generateToken(authentication);
+
+        ProfileUserDTO profileUserDTO = new ProfileUserDTO();
+        profileUserDTO.setUserName("dummy");
+        profileUserDTO.setEmail("dummy@dummy.com");
+        profileUserDTO.setFullName("Dummy");
+
+        SignInResponseDTO signInResponseVO = new SignInResponseDTO();
+        signInResponseVO.setAccessToken(newAccessToken);
+        signInResponseVO.setProfileUserInternal(profileUserDTO);
+
+        return signInResponseVO;
     }
 
 

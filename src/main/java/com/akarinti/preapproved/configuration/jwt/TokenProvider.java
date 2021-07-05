@@ -20,8 +20,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-public class TokenProvider implements Serializable {
-    private static final long serialVersionUID = 195078781829856002L;
+public class TokenProvider {
 
     @Value("${access.token.validity.seconds}")
     Long accessTokenValidity;
@@ -64,7 +63,7 @@ public class TokenProvider implements Serializable {
 
     public String generateToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
-        if (authorities.contains("SUPER_ADMIN")) authorities = "SUPER_ADMIN";
+        log.warn(authorities);
         return Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(authoritiesKey, authorities)
@@ -74,13 +73,14 @@ public class TokenProvider implements Serializable {
                 .compact();
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) {
+    public Boolean validateToken(String token) {
         final String username = getUsernameFromToken(token);
 
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        //return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        return !isTokenExpired(token);
     }
 
-    public UsernamePasswordAuthenticationToken getAuthentication(final String token, final Authentication existingAuth, final UserDetails userDetails) {
+    public UsernamePasswordAuthenticationToken getAuthentication(final String token, final Authentication existingAuth, final String sessionId) {
 
         final JwtParser jwtParser = Jwts.parser().setSigningKey(signingKey);
 
@@ -92,6 +92,6 @@ public class TokenProvider implements Serializable {
                 Arrays.stream(claims.get(authoritiesKey).toString().split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
-        return new UsernamePasswordAuthenticationToken(userDetails, token, authorities);
+        return new UsernamePasswordAuthenticationToken(sessionId, token, authorities);
     }
 }
