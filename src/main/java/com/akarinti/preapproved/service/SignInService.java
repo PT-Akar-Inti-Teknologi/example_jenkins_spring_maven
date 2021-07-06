@@ -99,6 +99,7 @@ public class SignInService implements UserDetailsService {
         SignInResponseDTO signInResponseVO = new SignInResponseDTO();
         signInResponseVO.setAccessToken(newAccessToken);
         signInResponseVO.setProfileUserInternal(profileUserDTO);
+        signInResponseVO.setRoles(Collections.singletonList("Supervisor"));
 
         return signInResponseVO;
     }
