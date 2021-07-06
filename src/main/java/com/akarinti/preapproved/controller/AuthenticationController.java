@@ -22,19 +22,13 @@ public class AuthenticationController {
     SignInService signInService;
 
 
-//    @PreAuthorize("permitAll")
-//    @PostMapping(value = "/logout",
-//            produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<ResultVO> logout(
-//            @RequestBody SignOutRequestVO signOutRequestVO) {
-//        AbstractRequestHandler handler = new AbstractRequestHandler() {
-//            @Override
-//            public Object processRequest() {
-//                return signInService.logout(signOutRequestVO);
-//            }
-//        };
-//        return handler.getResult();
-//    }
+    @PreAuthorize("isAuthenticated()")
+    @PostMapping(value = "/logout",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResultDTO> logoutUser() {
+        // TODO: implement logout service
+        return ResponseEntity.ok(new ResultDTO(HttpStatus.OK.name(), "success"));
+    }
 
     @PreAuthorize("permitAll")
     @PostMapping(value = "/login",
