@@ -13,7 +13,7 @@ jobs:
           java-version: '8'
           distribution: 'adopt'
       - run: mvn -DskipTests --batch-mode --update-snapshots package
-      - run: mkdir build && cp target/*.jar staging
+      - run: mkdir build && cp target/*.jar build
       - uses: actions/upload-artifact@v2
         with:
           name: Package
