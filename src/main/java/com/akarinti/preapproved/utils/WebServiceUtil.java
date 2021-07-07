@@ -1,6 +1,7 @@
 package com.akarinti.preapproved.utils;
 
 
+import com.akarinti.preapproved.dto.authentication.uidm.logout.UidmLogoutRequestDTO;
 import com.akarinti.preapproved.utils.apiresponse.BCAErrorResponse;
 import com.akarinti.preapproved.utils.apiresponse.BCAOauth2Response;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -31,6 +32,12 @@ public class WebServiceUtil {
     @Value("${login.url}")
     public void setLoginUrl(String loginUrl) {
         WebServiceUtil.loginUrl = loginUrl;
+    }
+
+    private static String logoutUrl;
+    @Value("${logout.url}")
+    public void setLogoutUrl(String logoutUrl) {
+        WebServiceUtil.loginUrl = logoutUrl;
     }
 
     private static String userDetailUrl;
@@ -115,6 +122,43 @@ public class WebServiceUtil {
             Unirest.config().verifySsl(verifySsl);
             response = Unirest
                     .post(loginUrl)
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", authorization)
+                    .header("x-bca-key", apiKey)
+                    .header("x-bca-timestamp", timestamp)
+                    .header("x-bca-signature", signature)
+                    .header("app-access-key", appKey)
+                    .body(jsonInString)
+                    .asJson();
+        } catch (UnirestException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to load url: " + loginUrl);
+        }
+        String apiResponse = response.getBody().toString();
+        if (response.getStatus() != 200) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            BCAErrorResponse bcaErrorResponse = objectMapper.readValue(apiResponse, BCAErrorResponse.class);
+            String errorMessage = (String) bcaErrorResponse.getError_message().get("indonesian");
+            throw new RuntimeException(errorMessage);
+        }
+        return apiResponse;
+    }
+
+    @SneakyThrows
+    public static String BCAUidmLogout(String accessToken, String timestamp, String signature, UidmLogoutRequestDTO uidmLogoutRequestDTO) {
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonInString = null;
+        try {
+            jsonInString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(uidmLogoutRequestDTO);
+        } catch (Exception e) {
+            log.error("ERROR");
+        }
+        String authorization = "Bearer " + accessToken;
+        HttpResponse<JsonNode> response = null;
+        try {
+            Unirest.config().verifySsl(verifySsl);
+            response = Unirest
+                    .post(logoutUrl)
                     .header("Content-Type", "application/json")
                     .header("Authorization", authorization)
                     .header("x-bca-key", apiKey)
