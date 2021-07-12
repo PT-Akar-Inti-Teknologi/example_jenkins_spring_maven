@@ -104,6 +104,34 @@ public class SignInService implements UserDetailsService {
         return signInResponseVO;
     }
 
+    public SignInResponseDTO logout(String sessionId) {
+        //dummy, will be replaced with a real one
+        if(!sessionId.equals("dummy")){
+            return null;
+        }
+
+        Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+
+        User userPrincipal = new User(sessionId, "", true, true, true, true, authorities);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userPrincipal, sessionId, authorities);
+        final Authentication authentication = sessionAuthenticationProvider.authenticate(authenticationToken);
+
+        String newAccessToken = tokenProvider.generateToken(authentication);
+
+        ProfileUserDTO profileUserDTO = new ProfileUserDTO();
+        profileUserDTO.setUserName("dummy");
+        profileUserDTO.setEmail("dummy@dummy.com");
+        profileUserDTO.setFullName("Dummy");
+
+        SignInResponseDTO signInResponseVO = new SignInResponseDTO();
+        signInResponseVO.setAccessToken(newAccessToken);
+        signInResponseVO.setProfileUserInternal(profileUserDTO);
+        signInResponseVO.setRoles(Collections.singletonList("Supervisor"));
+
+        return signInResponseVO;
+    }
+
 
     private static String getTimestamp() {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");

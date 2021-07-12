@@ -1,0 +1,20 @@
+on:
+  push:
+    branches: main
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
+        with:
+          java-version: '8'
+          distribution: 'adopt'
+      - run: mvn -DskipTests --batch-mode --update-snapshots package
+      - run: mkdir build && cp target/*.jar build
+      - uses: actions/upload-artifact@v2
+        with:
+          name: Package
+          path: build
