@@ -3,6 +3,7 @@ package com.akarinti.preapproved.jpa.entity;
 import com.akarinti.preapproved.dto.rumahsaya.RumahSayaRequestDTO;
 import lombok.Data;
 import lombok.SneakyThrows;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
@@ -11,18 +12,21 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Entity
-@Table(name = "USER_BCA")
+@Table(name = "RUMAHSAYA")
 @DynamicUpdate
 @Data
 public class RumahSaya extends Base {
 
-    @Column(name = "ID_DATA")
+    @OneToOne(mappedBy = "rumahSaya")
+    private Aplikasi aplikasi;
+
+    @Column(name = "ID_APP_DATA")
     private String appDataID;
 
     @Column(name = "NO_REK_BCA")
     private String norekBca;
 
-    @Column(name = "no_TELP_BCA")
+    @Column(name = "NO_TELP_BCA")
     private String noTelpdiBca;
 
     @Column(name = "ID_MEMBER")
@@ -116,6 +120,10 @@ public class RumahSaya extends Base {
 
     @Column(name = "NAMA_FILE_KTP_PASANGAN")
     private String namaFileKtpPasangan;
+
+    @Column(name = "SERVICE_LEVEL_OVERDUE")
+    @ColumnDefault("false")
+    private boolean serviceLevelOverdue;
 
     public RumahSaya() {
 
