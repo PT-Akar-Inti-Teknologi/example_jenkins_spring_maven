@@ -3,6 +3,8 @@ package com.akarinti.preapproved.controller;
 import com.akarinti.preapproved.dto.ResultDTO;
 import com.akarinti.preapproved.dto.authentication.SignInRequestDTO;
 import com.akarinti.preapproved.dto.authentication.SignInResponseDTO;
+import com.akarinti.preapproved.dto.rumahsaya.RumahSayaRequestDTO;
+import com.akarinti.preapproved.service.RumahSayaService;
 import com.akarinti.preapproved.service.SignInService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +23,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class RumahSayaController {
 
     @Autowired
-    SignInService signInService;
+    RumahSayaService rumahSayaService;
 
     @PreAuthorize("permitAll")
     @PostMapping(value = "/",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultDTO> loginUser(@RequestBody SignInRequestDTO signInRequestDTO) {
-        SignInResponseDTO response = signInService.loginBySession(signInRequestDTO.getSessionId());
-        if(response == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-        }
+    public ResponseEntity<ResultDTO> loginUser(@RequestBody RumahSayaRequestDTO rumahSayaRequestDTO) {
+        Boolean response = rumahSayaService.createData(rumahSayaRequestDTO);
+//        if(response == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+//        }
         return ResponseEntity.ok(new ResultDTO(HttpStatus.OK.name(), response));
     }
 
