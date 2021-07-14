@@ -8,4 +8,7 @@ public class SignInRequestDTO {
 
     @JsonProperty(value="session_id")
     private String sessionId;
+
+    @JsonProperty(value="user_id")
+    private String userId;
 }
