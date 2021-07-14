@@ -1,8 +1,10 @@
 package com.akarinti.preapproved.controller;
 
 import com.akarinti.preapproved.dto.ResultDTO;
+import com.akarinti.preapproved.dto.authentication.LogoutResponseDTO;
 import com.akarinti.preapproved.dto.authentication.SignInRequestDTO;
 import com.akarinti.preapproved.dto.authentication.SignInResponseDTO;
+import com.akarinti.preapproved.dto.authentication.uidm.logout.UidmLogoutRequestDTO;
 import com.akarinti.preapproved.service.SignInService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,16 +27,16 @@ public class AuthenticationController {
     @PreAuthorize("isAuthenticated()")
     @PostMapping(value = "/logout",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultDTO> logoutUser() {
-        // TODO: implement logout service
-        return ResponseEntity.ok(new ResultDTO(HttpStatus.OK.name(), "success"));
+    public ResponseEntity<ResultDTO> logoutUser(@RequestBody UidmLogoutRequestDTO uidmLogoutRequestDTO) {
+        LogoutResponseDTO response = signInService.logout(uidmLogoutRequestDTO.getUserId());
+        return ResponseEntity.ok(new ResultDTO(HttpStatus.OK.name(), response));
     }
 
     @PreAuthorize("permitAll")
     @PostMapping(value = "/login",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultDTO> loginUser(@RequestBody SignInRequestDTO signInRequestDTO) {
-        SignInResponseDTO response = signInService.loginBySession(signInRequestDTO.getSessionId());
+        SignInResponseDTO response = signInService.loginBySession(signInRequestDTO.getSessionId(), signInRequestDTO.getUserId());
         if(response == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
