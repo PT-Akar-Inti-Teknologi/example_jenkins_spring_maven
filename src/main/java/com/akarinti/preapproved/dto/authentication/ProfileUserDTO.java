@@ -1,10 +1,15 @@
 package com.akarinti.preapproved.dto.authentication;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
 public class ProfileUserDTO {
+
+    @JsonProperty(value = "user_id")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String userId;
 
     @JsonProperty(value = "user_name")
     private String userName;
@@ -17,6 +22,10 @@ public class ProfileUserDTO {
 
     @JsonProperty(value = "phone_number")
     private String phoneNumber;
+
+    @JsonProperty(value = "role_code")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String roleCode;
 
     @JsonProperty(value = "office_code")
     private String officeCode;
