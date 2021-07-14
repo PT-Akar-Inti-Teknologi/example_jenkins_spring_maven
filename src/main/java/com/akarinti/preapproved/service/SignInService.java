@@ -2,9 +2,12 @@ package com.akarinti.preapproved.service;
 
 import com.akarinti.preapproved.configuration.jwt.SessionAuthenticationProvider;
 import com.akarinti.preapproved.configuration.jwt.TokenProvider;
+import com.akarinti.preapproved.dto.authentication.LogoutResponseDTO;
 import com.akarinti.preapproved.dto.authentication.ProfileUserDTO;
 import com.akarinti.preapproved.dto.authentication.SignInRequestDTO;
 import com.akarinti.preapproved.dto.authentication.SignInResponseDTO;
+import com.akarinti.preapproved.dto.authentication.uidm.logout.UidmLogoutResponseDTO;
+import com.akarinti.preapproved.dto.authentication.uidm.userDetail.UserDetailResponseDTO;
 import com.akarinti.preapproved.jpa.repository.UserBCARepository;
 import com.akarinti.preapproved.utils.WebServiceUtil;
 import com.akarinti.preapproved.utils.apiresponse.BCAOauth2Response;
@@ -75,11 +78,36 @@ public class SignInService implements UserDetailsService {
         SignInService.apiSecret = apiSecret;
     }
 
+    private Authentication setUserAuthentication(UserDetailResponseDTO userDetailResponseDTO, String sessionId) {
+        ProfileUserDTO userDTO = userDetailResponseDTO.getUserDetail();
 
-    public SignInResponseDTO loginBySession(String sessionId) {
+        Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+        authorities.add(new SimpleGrantedAuthority(userDTO.getRoleCode()));
+
+        User userPrincipal = new User(userDTO.getUserId(), "", true, true, true, true, authorities);
+        // FIXME: check UsernamePasswordAuthenticationToken credential params, do we need to use sessionId?
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userPrincipal, sessionId, authorities);
+        return sessionAuthenticationProvider.authenticate(authenticationToken);
+    }
+
+    public SignInResponseDTO loginBySession(String sessionId, String userId) {
         //dummy, will be replaced with a real one
         if(!sessionId.equals("dummy")){
-            return null;
+            UserDetailResponseDTO userDetailResponseDTO = WebServiceUtil.BCAUidmUserDetailBySessionId(userId, sessionId);
+
+            final Authentication authentication = setUserAuthentication(userDetailResponseDTO, sessionId);
+
+            String newAccessToken = tokenProvider.generateToken(authentication);
+
+            ProfileUserDTO profileUserDTO = userDetailResponseDTO.getUserDetail();
+
+            SignInResponseDTO signInResponseVO = new SignInResponseDTO();
+            signInResponseVO.setAccessToken(newAccessToken);
+            signInResponseVO.setProfileUserInternal(profileUserDTO);
+            // FIXME: need to check role later
+            signInResponseVO.setRoles(Collections.singletonList("VERIFIER"));
+
+            return signInResponseVO;
         }
 
         Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
@@ -104,32 +132,12 @@ public class SignInService implements UserDetailsService {
         return signInResponseVO;
     }
 
-    public SignInResponseDTO logout(String sessionId) {
-        //dummy, will be replaced with a real one
-        if(!sessionId.equals("dummy")){
-            return null;
-        }
-
-        Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-
-        User userPrincipal = new User(sessionId, "", true, true, true, true, authorities);
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userPrincipal, sessionId, authorities);
-        final Authentication authentication = sessionAuthenticationProvider.authenticate(authenticationToken);
-
-        String newAccessToken = tokenProvider.generateToken(authentication);
-
-        ProfileUserDTO profileUserDTO = new ProfileUserDTO();
-        profileUserDTO.setUserName("dummy");
-        profileUserDTO.setEmail("dummy@dummy.com");
-        profileUserDTO.setFullName("Dummy");
-
-        SignInResponseDTO signInResponseVO = new SignInResponseDTO();
-        signInResponseVO.setAccessToken(newAccessToken);
-        signInResponseVO.setProfileUserInternal(profileUserDTO);
-        signInResponseVO.setRoles(Collections.singletonList("Supervisor"));
-
-        return signInResponseVO;
+    public LogoutResponseDTO logout(String userId) {
+        UidmLogoutResponseDTO uidmLogoutResponseDTO = WebServiceUtil.BCAUidmLogout(userId);
+        LogoutResponseDTO logoutResponseDTO = new LogoutResponseDTO();
+        Boolean status = uidmLogoutResponseDTO.getLogoutStatus().equalsIgnoreCase("1");
+        logoutResponseDTO.setStatus(status);
+        return logoutResponseDTO;
     }
 
 
