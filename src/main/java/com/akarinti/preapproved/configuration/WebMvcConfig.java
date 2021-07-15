@@ -45,6 +45,7 @@ public class WebMvcConfig extends WebSecurityConfigurerAdapter implements WebMvc
                 authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .antMatchers("/api/auth/login").permitAll()
+                .antMatchers("/api/auth/generate-token").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class)
