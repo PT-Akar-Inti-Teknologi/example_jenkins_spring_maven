@@ -6,6 +6,7 @@ import com.akarinti.preapproved.dto.authentication.LogoutResponseDTO;
 import com.akarinti.preapproved.dto.authentication.ProfileUserDTO;
 import com.akarinti.preapproved.dto.authentication.SignInRequestDTO;
 import com.akarinti.preapproved.dto.authentication.SignInResponseDTO;
+import com.akarinti.preapproved.dto.authentication.token.TokenSignInRequestDTO;
 import com.akarinti.preapproved.dto.authentication.uidm.logout.UidmLogoutResponseDTO;
 import com.akarinti.preapproved.dto.authentication.uidm.userDetail.UserDetailResponseDTO;
 import com.akarinti.preapproved.jpa.repository.UserBCARepository;
@@ -23,6 +24,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -77,6 +79,12 @@ public class SignInService implements UserDetailsService {
     public void setApiSecret(String apiSecret) {
         SignInService.apiSecret = apiSecret;
     }
+
+    @Value("${token.username}")
+    String tokenUsername;
+
+    @Value("${token.password}")
+    String tokenPassword;
 
     private Authentication setUserAuthentication(UserDetailResponseDTO userDetailResponseDTO, String sessionId) {
         ProfileUserDTO userDTO = userDetailResponseDTO.getUserDetail();
@@ -239,4 +247,16 @@ public class SignInService implements UserDetailsService {
 //        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), getPrivileges(user));
 //    }
 
+    public String generateToken(TokenSignInRequestDTO signInRequest){
+        if (signInRequest.getUsername().equals(tokenUsername) && signInRequest.getPassword().equals(tokenPassword)) {
+            Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+            authorities.add(new SimpleGrantedAuthority("ACCESS_RUMAHSAYA_SERVICES"));
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(signInRequest.getUsername(), signInRequest.getPassword(), authorities);
+            final Authentication authentication = sessionAuthenticationProvider.authenticate(authenticationToken);
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            return tokenProvider.generatePublicToken(authentication);
+        }
+        return null;
+    }
 }

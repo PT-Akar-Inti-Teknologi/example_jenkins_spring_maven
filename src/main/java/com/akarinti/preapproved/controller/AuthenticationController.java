@@ -4,6 +4,7 @@ import com.akarinti.preapproved.dto.ResultDTO;
 import com.akarinti.preapproved.dto.authentication.LogoutResponseDTO;
 import com.akarinti.preapproved.dto.authentication.SignInRequestDTO;
 import com.akarinti.preapproved.dto.authentication.SignInResponseDTO;
+import com.akarinti.preapproved.dto.authentication.token.TokenSignInRequestDTO;
 import com.akarinti.preapproved.dto.authentication.uidm.logout.UidmLogoutRequestDTO;
 import com.akarinti.preapproved.service.SignInService;
 import lombok.extern.slf4j.Slf4j;
@@ -50,13 +51,16 @@ public class AuthenticationController {
     }
 
 
-//    @PreAuthorize("permitAll")
-//    @PostMapping(value = "/generate-token",
-//            produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<ResultVO> generateToken(@RequestBody SignInRequestVO signInRequestVO) {
-//
-//        return ResponseEntity.ok(new ResultVO(HttpStatus.OK.name(),signInService.generateToken(signInRequestVO)));
-//    }
+    @PreAuthorize("permitAll")
+    @PostMapping(value = "/generate-token",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResultDTO> generateToken(@RequestBody TokenSignInRequestDTO signInRequestVO) {
+        String response = signInService.generateToken(signInRequestVO);
+        if(response == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+        return ResponseEntity.ok(new ResultDTO(HttpStatus.OK.name(), response));
+    }
 //
 //    @GetMapping(value = "/is-expired",
 //            produces = MediaType.APPLICATION_JSON_VALUE)
