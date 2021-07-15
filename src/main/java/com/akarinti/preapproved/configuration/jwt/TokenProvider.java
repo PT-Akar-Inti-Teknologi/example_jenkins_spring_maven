@@ -34,6 +34,9 @@ public class TokenProvider {
     @Value("${jwt.audience}")
     String audience;
 
+    @Value("${token.audience}")
+    String tokenAudience;
+
 
     public String getUsernameFromToken(String token) {
         Claims claims = getAllClaimsFromToken(token);
@@ -73,7 +76,27 @@ public class TokenProvider {
                 .compact();
     }
 
+    public String generatePublicToken(Authentication authentication) {
+        String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
+        log.warn(authorities);
+        return Jwts.builder()
+                .setSubject(authentication.getName())
+                .claim(authoritiesKey, authorities)
+                .setAudience(tokenAudience)
+                .signWith(SignatureAlgorithm.HS256, signingKey)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + accessTokenValidity*1000 * 11000)) // expire 30 years
+                .compact();
+    }
+
     public Boolean validateToken(String token) {
+        final String username = getUsernameFromToken(token);
+
+        //return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        return !isTokenExpired(token);
+    }
+
+    public Boolean validatePublicToken(String token) {
         final String username = getUsernameFromToken(token);
 
         //return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
