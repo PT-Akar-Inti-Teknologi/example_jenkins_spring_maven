@@ -25,7 +25,7 @@ public class RumahSayaController {
     @Autowired
     RumahSayaService rumahSayaService;
 
-    @PreAuthorize("permitAll")
+    @PreAuthorize("hasAuthority('ACCESS_RUMAHSAYA_SERVICES')")
     @PostMapping(value = "/",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultDTO> loginUser(@RequestBody RumahSayaRequestDTO rumahSayaRequestDTO) {
