@@ -37,6 +37,8 @@ public class TokenProvider {
     @Value("${token.audience}")
     String tokenAudience;
 
+    @Value("${token.username}")
+    String tokenUsername;
 
     public String getUsernameFromToken(String token) {
         Claims claims = getAllClaimsFromToken(token);
@@ -66,7 +68,6 @@ public class TokenProvider {
 
     public String generateToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
-        log.warn(authorities);
         return Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(authoritiesKey, authorities)
@@ -78,7 +79,6 @@ public class TokenProvider {
 
     public String generatePublicToken(Authentication authentication) {
         String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
-        log.warn(authorities);
         return Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(authoritiesKey, authorities)
@@ -99,8 +99,7 @@ public class TokenProvider {
     public Boolean validatePublicToken(String token) {
         final String username = getUsernameFromToken(token);
 
-        //return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
-        return !isTokenExpired(token);
+        return !isTokenExpired(token) && username.equals(tokenUsername);
     }
 
     public UsernamePasswordAuthenticationToken getAuthentication(final String token, final Authentication existingAuth, final String sessionId) {

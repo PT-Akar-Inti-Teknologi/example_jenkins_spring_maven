@@ -28,7 +28,7 @@ public class ResponNLO extends Base {
 
     @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(name = "RUMAHSAYA_ID")
-    private RumahSaya rumahSaya;
+    private Aplikasi rumahSaya;
 
     // do we need to define per field or save as json?
     @Column(name = "JSON_SLIK")

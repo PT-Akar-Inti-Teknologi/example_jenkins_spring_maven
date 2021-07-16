@@ -4,22 +4,21 @@ import com.akarinti.preapproved.configuration.jwt.SessionAuthenticationProvider;
 import com.akarinti.preapproved.configuration.jwt.TokenProvider;
 import com.akarinti.preapproved.dto.authentication.LogoutResponseDTO;
 import com.akarinti.preapproved.dto.authentication.ProfileUserDTO;
-import com.akarinti.preapproved.dto.authentication.SignInRequestDTO;
 import com.akarinti.preapproved.dto.authentication.SignInResponseDTO;
+import com.akarinti.preapproved.dto.authentication.token.GenerateTokenResponseDTO;
 import com.akarinti.preapproved.dto.authentication.token.TokenSignInRequestDTO;
 import com.akarinti.preapproved.dto.authentication.uidm.logout.UidmLogoutResponseDTO;
 import com.akarinti.preapproved.dto.authentication.uidm.userDetail.UserDetailResponseDTO;
 import com.akarinti.preapproved.jpa.repository.UserBCARepository;
 import com.akarinti.preapproved.utils.WebServiceUtil;
 import com.akarinti.preapproved.utils.apiresponse.BCAOauth2Response;
+import com.akarinti.preapproved.utils.exception.CustomExceptionHandler;
+import com.akarinti.preapproved.utils.exception.StatusCode;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.intercept.RunAsUserToken;
-import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,7 +31,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -247,7 +245,7 @@ public class SignInService implements UserDetailsService {
 //        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), getPrivileges(user));
 //    }
 
-    public String generateToken(TokenSignInRequestDTO signInRequest){
+    public GenerateTokenResponseDTO generateToken(TokenSignInRequestDTO signInRequest){
         if (signInRequest.getUsername().equals(tokenUsername) && signInRequest.getPassword().equals(tokenPassword)) {
             Set<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
             authorities.add(new SimpleGrantedAuthority("ACCESS_RUMAHSAYA_SERVICES"));
@@ -255,8 +253,13 @@ public class SignInService implements UserDetailsService {
             final Authentication authentication = sessionAuthenticationProvider.authenticate(authenticationToken);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            return tokenProvider.generatePublicToken(authentication);
+            String accessToken = tokenProvider.generatePublicToken(authentication);
+            GenerateTokenResponseDTO generateTokenResponseDTO = new GenerateTokenResponseDTO();
+            generateTokenResponseDTO.setAccessToken(accessToken);
+            return generateTokenResponseDTO;
+        } else {
+            log.info("message: "+ StatusCode.UNAUTHORIZED.message());
+            throw new CustomExceptionHandler(HttpStatus.UNAUTHORIZED, StatusCode.UNAUTHORIZED.message(), StatusCode.UNAUTHORIZED);
         }
-        return null;
     }
 }

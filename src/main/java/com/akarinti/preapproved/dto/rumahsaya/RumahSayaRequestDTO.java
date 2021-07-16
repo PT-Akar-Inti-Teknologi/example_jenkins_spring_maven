@@ -1,7 +1,11 @@
 package com.akarinti.preapproved.dto.rumahsaya;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
 
 @Data
 public class RumahSayaRequestDTO {
@@ -36,7 +40,9 @@ public class RumahSayaRequestDTO {
     private String tempatLahir;
 
     @JsonProperty(value = "tanggal_lahir")
-    private String tanggalLahir;
+    @JsonFormat(pattern="yyyy-MM-dd")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate tanggalLahir;
 
     @JsonProperty(value = "nik")
     private String nik;
@@ -57,7 +63,9 @@ public class RumahSayaRequestDTO {
     private String tempatLahirPasangan;
 
     @JsonProperty(value = "tanggal_lahir_pasangan")
-    private String tanggalLahirPasangan;
+    @JsonFormat(pattern="yyyy-MM-dd")
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    private LocalDate tanggalLahirPasangan;
 
     @JsonProperty(value = "nik_pasangan")
     private String nikPasangan;
