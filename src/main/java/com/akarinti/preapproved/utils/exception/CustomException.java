@@ -16,14 +16,16 @@ public class CustomException extends RuntimeException {
 		super();
 	}
 
-    public CustomException(Object message){
-		super((String) message);
-	}
+    public CustomException(StatusCode statusCode) {
+        super(statusCode.message().toString());
+        this.status = statusCode.httpStatus();
+        this.errorMessage = statusCode.message().toString();
+        this.statusCode = statusCode;
+    }
 
-    public CustomException(HttpStatus code, Object message, StatusCode statusCode) {
-        super(message.toString());
-        log.info("message:s "+ message.toString());
-        this.status = code;
+    public CustomException(StatusCode statusCode, String message) {
+        super(statusCode.message().toString());
+        this.status = statusCode.httpStatus();
         this.errorMessage = message;
         this.statusCode = statusCode;
     }

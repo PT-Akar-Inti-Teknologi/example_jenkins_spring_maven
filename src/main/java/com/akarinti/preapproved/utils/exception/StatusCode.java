@@ -6,23 +6,24 @@ import org.springframework.http.HttpStatus;
 import java.util.HashMap;
 
 public enum StatusCode {
-    OK(200, "BO-200", new StatusCodeMessageDTO("sukses", "success")),
-    INVALID_ARGUMENT(400, "BO-400", new StatusCodeMessageDTO("argumen tidak valid", "invalid argument")),
-    UNAUTHORIZED(401, "BO-401", new StatusCodeMessageDTO("tidak punya akses", "Unauthorized")),
-    INVALID_JSON(400, "BO-490", new StatusCodeMessageDTO("struktur atau format JSON tidak valid", "invalid JSON structure or format"));
+    OK(HttpStatus.OK, "BO-200", new StatusCodeMessageDTO("sukses", "success")),
+    INVALID_ARGUMENT(HttpStatus.BAD_REQUEST, "BO-400", new StatusCodeMessageDTO("argumen tidak valid", "invalid argument")),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "BO-401", new StatusCodeMessageDTO("tidak punya akses", "Unauthorized")),
+    INVALID_JSON(HttpStatus.BAD_REQUEST, "BO-490", new StatusCodeMessageDTO("struktur atau format JSON tidak valid", "invalid JSON structure or format")),
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "BO-500", new StatusCodeMessageDTO("terjadi kesalahan internal server", "internal server error"));
 
-    private final int code;
+    private final HttpStatus httpStatus;
     private final String codeDesc;
     private final Object message;
 
-    private StatusCode(int value, String codeDesc, Object message) {
-        this.code = value;
+    private StatusCode(HttpStatus httpStatus, String codeDesc, Object message) {
+        this.httpStatus = httpStatus;
         this.codeDesc = codeDesc;
         this.message = message;
     }
 
-    public int code() {
-        return this.code;
+    public HttpStatus httpStatus() {
+        return this.httpStatus;
     }
 
     public String codeDesc() {

@@ -44,7 +44,7 @@ public class ResultDTO {
     }
 
     public ResultDTO(MetaPaginationDTO meta, Object result) {
-        this.code = "BO-"+ StatusCode.OK.code();
+        this.code = "BO-" + StatusCode.OK.code();
         this.metaPaginationDTO = meta;
         this.message = StatusCode.OK.message();
         this.result = result;

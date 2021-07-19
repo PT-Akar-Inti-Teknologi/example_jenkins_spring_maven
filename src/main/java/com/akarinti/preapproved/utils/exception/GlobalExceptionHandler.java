@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,24 +32,26 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         final ResultDTO resultDTO = new ResultDTO(ex.getErrorMessage(), null);
         return new ResponseEntity(resultDTO, new HttpHeaders(), ex.getStatus());
     }
-//    @ExceptionHandler(HttpMessageNotReadableException.class)
-//    protected ResponseEntity<Object> invalidHttpMessageNotReadableException(HttpServletResponse response, HttpMessageNotReadableException ex) {
-//        final ResultDTO resultDTO = new ResultDTO(ex.getErrorMessage(), null, HttpStatus.BAD_REQUEST.value());
-//        return new ResponseEntity(resultDTO, new HttpHeaders(), HttpStatus.BAD_REQUEST);
-//    }
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handle(Exception ex, HttpServletRequest request, HttpServletResponse response) {
+        log.info("internal server error: "+ ex.getLocalizedMessage());
+        if (ex instanceof NullPointerException) {
+            final ResultDTO resultDTO = new ResultDTO(StatusCode.INVALID_ARGUMENT, ex.getMessage());
+            return new ResponseEntity(resultDTO, new HttpHeaders(), HttpStatus.BAD_REQUEST);
+        }
+        final ResultDTO resultDTO = new ResultDTO(StatusCode.INTERNAL_SERVER_ERROR, ex.getMessage());
+        return new ResponseEntity(resultDTO, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-//        final List<HashMap<String, String>> errors = new ArrayList<>();
-//        for (final FieldError error : ex.get().getFieldErrors()) {
-//
-//        }
         final ResultDTO resultDTO = new ResultDTO(StatusCode.INVALID_JSON, null);
         return new ResponseEntity(resultDTO, headers, status);
     }
+
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, @Nullable Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
         final ResultDTO resultDTO = new ResultDTO(StatusCode.INVALID_ARGUMENT, body);
-        logger.info(ex.getClass().getName());
+        logger.info("class: "+ ex.getClass().getName());
         return new ResponseEntity(resultDTO, headers, status);
     }
     @Override
