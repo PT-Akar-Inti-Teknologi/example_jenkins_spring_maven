@@ -1,17 +1,16 @@
 package com.akarinti.preapproved.jpa.entity;
 
-import com.akarinti.preapproved.dto.rumahsaya.RumahSayaRequestDTO;
+import com.akarinti.preapproved.dto.rumahsaya.RumahSayaDTO;
 import lombok.Data;
 import lombok.SneakyThrows;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Table(name = "APLIKASI")
@@ -20,7 +19,7 @@ import java.util.Date;
 public class Aplikasi extends Base {
 
     @Column(name = "ID_APP_DATA")
-    private String appDataID;
+    private UUID appDataID;
 
     @Column(name = "NO_REK_BCA")
     private String norekBca;
@@ -29,7 +28,7 @@ public class Aplikasi extends Base {
     private String noTelpdiBca;
 
     @Column(name = "ID_MEMBER")
-    private String idMember;
+    private UUID idMember;
 
     @Column(name = "STATUS_PERNIKAHAN")
     private String statusPernikahan;
@@ -50,8 +49,7 @@ public class Aplikasi extends Base {
     private String tempatLahir;
 
     @Column(name = "TANGGAL_LAHIR")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date tanggalLahir;
+    private LocalDate tanggalLahir;
 
     @Column(name = "NIK")
     private String nik;
@@ -72,8 +70,7 @@ public class Aplikasi extends Base {
     private String tempatLahirPasangan;
 
     @Column(name = "TANGGAL_LAHIR_PASANGAN")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date tanggalLahirPasangan;
+    private LocalDate tanggalLahirPasangan;
 
     @Column(name = "NIK_PASANGAN")
     private String nikPasangan;
@@ -132,8 +129,8 @@ public class Aplikasi extends Base {
     public Aplikasi(
             String norekBca,
             String noTelpdiBca,
-            String idData,
-            String idMember,
+            UUID idData,
+            UUID idMember,
             String statusPernikahan,
             String statusPisahHarta,
             String jointIncome,
@@ -176,14 +173,14 @@ public class Aplikasi extends Base {
         this.namaLengkap = namaLengkap;
         this.jenisKelamin = jenisKelamin;
         this.tempatLahir = tempatLahir;
-        this.tanggalLahir = Date.from(tanggalLahir.atStartOfDay(ZoneId.of("GMT+7")).toInstant());
+        this.tanggalLahir = tanggalLahir;
         this.nik = nik;
         this.namaGadisIbuKandung = namaGadisIbuKandung;
         this.jenisPekerjaan = jenisPekerjaan;
         this.namaLengkapPasangan = namaLengkapPasangan;
         this.jenisKelaminPasangan = jenisKelaminPasangan;
         this.tempatLahirPasangan = tempatLahirPasangan;
-        this.tanggalLahirPasangan = Date.from(tanggalLahirPasangan.atStartOfDay(ZoneId.of("GMT+7")).toInstant());
+        this.tanggalLahirPasangan = tanggalLahirPasangan;
         this.nikPasangan = nikPasangan;
         this.namaGadisIbuKandungPasangan = namaGadisIbuKandungPasangan;
         this.penghasilanPemohon = penghasilanPemohon;
@@ -201,41 +198,41 @@ public class Aplikasi extends Base {
         this.namaFileKtpPasangan = namaFileKtpPasangan;
     }
 
-    public static Aplikasi fromDTO(RumahSayaRequestDTO rumahSayaRequestDTO) {
+    public static Aplikasi fromDTO(RumahSayaDTO rumahSayaDTO) {
         return new Aplikasi(
-                rumahSayaRequestDTO.getNorekBca(),
-                rumahSayaRequestDTO.getNoTelpdiBca(),
-                rumahSayaRequestDTO.getIdData(),
-                rumahSayaRequestDTO.getIdMember(),
-                rumahSayaRequestDTO.getStatusPernikahan(),
-                rumahSayaRequestDTO.getStatusPisahHarta(),
-                rumahSayaRequestDTO.getJointIncome(),
-                rumahSayaRequestDTO.getNamaLengkap(),
-                rumahSayaRequestDTO.getJenisKelamin(),
-                rumahSayaRequestDTO.getTempatLahir(),
-                rumahSayaRequestDTO.getTanggalLahir(),
-                rumahSayaRequestDTO.getNik(),
-                rumahSayaRequestDTO.getNamaGadisIbuKandung(),
-                rumahSayaRequestDTO.getJenisPekerjaan(),
-                rumahSayaRequestDTO.getNamaLengkapPasangan(),
-                rumahSayaRequestDTO.getJenisKelaminPasangan(),
-                rumahSayaRequestDTO.getTempatLahirPasangan(),
-                rumahSayaRequestDTO.getTanggalLahirPasangan(),
-                rumahSayaRequestDTO.getNikPasangan(),
-                rumahSayaRequestDTO.getNamaGadisIbuKandungPasangan(),
-                rumahSayaRequestDTO.getPenghasilanPemohon(),
-                rumahSayaRequestDTO.getPenghasilanPasangan(),
-                rumahSayaRequestDTO.getBiayaRumahTangga(),
-                rumahSayaRequestDTO.getTujuanKredit(),
-                rumahSayaRequestDTO.getTujuanKreditDescription(),
-                rumahSayaRequestDTO.getPlafonPengajuanKpr(),
-                rumahSayaRequestDTO.getSukuBunga(),
-                rumahSayaRequestDTO.getProvinsi(),
-                rumahSayaRequestDTO.getIdProvinsi(),
-                rumahSayaRequestDTO.getKotaAtauKabupaten(),
-                rumahSayaRequestDTO.getIdKotaAtauKabupaten(),
-                rumahSayaRequestDTO.getNamaFileKtp(),
-                rumahSayaRequestDTO.getNamaFileKtpPasangan()
+                rumahSayaDTO.getNorekBca(),
+                rumahSayaDTO.getNoTelpdiBca(),
+                rumahSayaDTO.getIdData(),
+                rumahSayaDTO.getIdMember(),
+                rumahSayaDTO.getStatusPernikahan(),
+                rumahSayaDTO.getStatusPisahHarta(),
+                rumahSayaDTO.getJointIncome(),
+                rumahSayaDTO.getNamaLengkap(),
+                rumahSayaDTO.getJenisKelamin(),
+                rumahSayaDTO.getTempatLahir(),
+                rumahSayaDTO.getTanggalLahir(),
+                rumahSayaDTO.getNik(),
+                rumahSayaDTO.getNamaGadisIbuKandung(),
+                rumahSayaDTO.getJenisPekerjaan(),
+                rumahSayaDTO.getNamaLengkapPasangan(),
+                rumahSayaDTO.getJenisKelaminPasangan(),
+                rumahSayaDTO.getTempatLahirPasangan(),
+                rumahSayaDTO.getTanggalLahirPasangan(),
+                rumahSayaDTO.getNikPasangan(),
+                rumahSayaDTO.getNamaGadisIbuKandungPasangan(),
+                rumahSayaDTO.getPenghasilanPemohon(),
+                rumahSayaDTO.getPenghasilanPasangan(),
+                rumahSayaDTO.getBiayaRumahTangga(),
+                rumahSayaDTO.getTujuanKredit(),
+                rumahSayaDTO.getTujuanKreditDescription(),
+                rumahSayaDTO.getPlafonPengajuanKpr(),
+                rumahSayaDTO.getSukuBunga(),
+                rumahSayaDTO.getProvinsi(),
+                rumahSayaDTO.getIdProvinsi(),
+                rumahSayaDTO.getKotaAtauKabupaten(),
+                rumahSayaDTO.getIdKotaAtauKabupaten(),
+                rumahSayaDTO.getNamaFileKtp(),
+                rumahSayaDTO.getNamaFileKtpPasangan()
         );
     }
 }

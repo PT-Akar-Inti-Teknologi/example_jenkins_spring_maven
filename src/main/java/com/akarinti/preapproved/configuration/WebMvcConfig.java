@@ -18,7 +18,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
-@EnableWebMvc
+//@EnableWebMvc
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebMvcConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 

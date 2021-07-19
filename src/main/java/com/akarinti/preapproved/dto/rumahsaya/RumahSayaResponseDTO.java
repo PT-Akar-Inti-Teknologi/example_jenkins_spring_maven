@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class RumahSayaResponsetDTO {
+public class RumahSayaResponseDTO {
     @JsonProperty(value = "success")
-    private boolean success;
+    private Boolean success = true;
 
 }

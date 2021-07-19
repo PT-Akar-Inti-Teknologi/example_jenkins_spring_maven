@@ -25,8 +25,8 @@ import java.util.List;
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-    @ExceptionHandler(CustomExceptionHandler.class)
-    protected ResponseEntity<Object> customExceptionHandler(CustomExceptionHandler ex, WebRequest request) {
+    @ExceptionHandler(CustomException.class)
+    protected ResponseEntity<Object> customExceptionHandler(CustomException ex, WebRequest request) {
         final ResultDTO resultDTO = new ResultDTO(ex.getErrorMessage(), null, ex.getStatusCode().codeDesc());
         return new ResponseEntity(resultDTO, new HttpHeaders(), ex.getStatus());
     }
@@ -67,7 +67,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             fieldError.put("message_summary", error.getObjectName() + " " + error.getDefaultMessage());
             errors.add(fieldError);
         }
-        final ResultDTO resultDTO = new ResultDTO(StatusCode.INVALID_ARGUMENT.message(), errors, StatusCode.INVALID_ARGUMENT.codeDesc());
+        final ResultDTO resultDTO = new ResultDTO(StatusCode.INVALID_ARGUMENT, errors);
         return new ResponseEntity(resultDTO, headers, status);
     }
 }

@@ -6,23 +6,23 @@ import org.springframework.http.HttpStatus;
 
 @Data
 @Slf4j
-public class CustomExceptionHandler extends RuntimeException {
+public class CustomException extends RuntimeException {
 
     private HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
     private Object errorMessage;
     private StatusCode statusCode;
 
-	public CustomExceptionHandler(){
+	public CustomException(){
 		super();
 	}
 
-    public CustomExceptionHandler(Object message){
+    public CustomException(Object message){
 		super((String) message);
 	}
 
-    public CustomExceptionHandler(HttpStatus code, Object message, StatusCode statusCode) {
+    public CustomException(HttpStatus code, Object message, StatusCode statusCode) {
         super(message.toString());
-        log.info("message: "+ message.toString());
+        log.info("message:s "+ message.toString());
         this.status = code;
         this.errorMessage = message;
         this.statusCode = statusCode;

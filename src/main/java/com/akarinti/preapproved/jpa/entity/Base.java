@@ -9,6 +9,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
@@ -38,18 +40,16 @@ public abstract class Base implements Serializable {
     private String secureId;
 
     @CreatedDate
-    @Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "DATE_CREATED", updatable = false)
-	private Date creationDate;
+	private LocalDateTime creationDate;
 
     @CreatedBy
     @Column(name = "CREATED_BY", length = 30, updatable = false)
     private String createdBy;
 
     @LastModifiedDate
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DATE_MODIFIED")
-    private Date modificationDate;
+    private LocalDateTime modificationDate;
 
     @LastModifiedBy
     @Column(name = "MODIFIED_BY", length = 30)
@@ -68,12 +68,12 @@ public abstract class Base implements Serializable {
             this.secureId = UUID.randomUUID().toString();
         }
         this.deleted = false;
-        this.creationDate = new Date();
+        this.creationDate = LocalDateTime.now();
     }
 
     @PreUpdate
     public void preUpdate(){
-        this.modificationDate = new Date();
+        this.modificationDate = LocalDateTime.now();
     }
 
 }

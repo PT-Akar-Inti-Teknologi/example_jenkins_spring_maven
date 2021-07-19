@@ -12,7 +12,7 @@ import com.akarinti.preapproved.dto.authentication.uidm.userDetail.UserDetailRes
 import com.akarinti.preapproved.jpa.repository.UserBCARepository;
 import com.akarinti.preapproved.utils.WebServiceUtil;
 import com.akarinti.preapproved.utils.apiresponse.BCAOauth2Response;
-import com.akarinti.preapproved.utils.exception.CustomExceptionHandler;
+import com.akarinti.preapproved.utils.exception.CustomException;
 import com.akarinti.preapproved.utils.exception.StatusCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -259,7 +259,7 @@ public class SignInService implements UserDetailsService {
             return generateTokenResponseDTO;
         } else {
             log.info("message: "+ StatusCode.UNAUTHORIZED.message());
-            throw new CustomExceptionHandler(HttpStatus.UNAUTHORIZED, StatusCode.UNAUTHORIZED.message(), StatusCode.UNAUTHORIZED);
+            throw new CustomException(HttpStatus.UNAUTHORIZED, StatusCode.UNAUTHORIZED.message(), StatusCode.UNAUTHORIZED);
         }
     }
 }
