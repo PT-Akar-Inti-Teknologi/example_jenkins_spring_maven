@@ -12,7 +12,7 @@ public class ResultPageDTO extends ResultDTO {
     private Long elements;
 
     public ResultPageDTO(Page page, Object result) {
-        this.code = "BO-"+ StatusCode.OK.code();
+        this.code = "BO-"+ StatusCode.OK.httpStatus().value();
         this.message = StatusCode.OK.message();
         this.pages = page.getTotalPages();
         this.elements = page.getTotalElements();

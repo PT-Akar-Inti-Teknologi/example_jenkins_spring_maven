@@ -34,7 +34,7 @@ public class ResultDTO {
     }
 
     public ResultDTO(StatusCode statusCode, Object result) {
-        this.code = "BO-"+ statusCode.code();
+        this.code = "BO-"+ statusCode.httpStatus().value();
         this.message = statusCode.message();
         this.result = result;
     }
