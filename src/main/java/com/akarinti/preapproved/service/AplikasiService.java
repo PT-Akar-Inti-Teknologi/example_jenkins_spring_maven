@@ -38,7 +38,13 @@ public class AplikasiService {
 
     @Transactional
     public ResultPageDTO getData(String search, Pageable pageable) {
-        Page<Aplikasi> aplikasiList = aplikasiRepository.findAll(AplikasiPredicate.aplikasiWithSearch(search), pageable);
+        Page<Aplikasi> aplikasiList;
+        if(search != null) {
+            aplikasiList = aplikasiRepository.findAll(AplikasiPredicate.aplikasiWithSearch(search), pageable);
+        }  else {
+            aplikasiList = aplikasiRepository.findAll(pageable);
+        }
+
         List<RumahSayaDTO> rumahSayaDTOList = new ArrayList<>();
         for (Aplikasi aplikasi: aplikasiList.getContent()) {
             rumahSayaDTOList.add(RumahSayaDTO.fromEntity(aplikasi));

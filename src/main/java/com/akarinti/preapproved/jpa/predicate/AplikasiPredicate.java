@@ -3,6 +3,7 @@ package com.akarinti.preapproved.jpa.predicate;
 import com.akarinti.preapproved.jpa.entity.QAplikasi;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.dsl.BooleanExpression;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,8 +26,6 @@ public class AplikasiPredicate {
         try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy",localeId);
             LocalDate date = LocalDate.parse(search,formatter);
-            System.out.println(date.atStartOfDay());
-            System.out.println(date.plusDays(1).atStartOfDay());
             builder.or(aplikasi.creationDate.between(date.atStartOfDay(), date.plusDays(1).atStartOfDay()));
 
         } catch (DateTimeParseException ignored) { }
