@@ -32,7 +32,7 @@ public class ResultDTO {
 
 
     public ResultDTO(StatusCode statusCode, Object result) {
-        this.code = "BO-"+ statusCode.code();
+        this.code = "BO-"+ statusCode.httpStatus().value();
         this.message = statusCode.message();
         this.result = result;
     }
@@ -44,7 +44,7 @@ public class ResultDTO {
     }
 
     public ResultDTO(MetaPaginationDTO meta, Object result) {
-        this.code = "BO-" + StatusCode.OK.code();
+        this.code = "BO-" + StatusCode.OK.httpStatus().value();
         this.metaPaginationDTO = meta;
         this.message = StatusCode.OK.message();
         this.result = result;
