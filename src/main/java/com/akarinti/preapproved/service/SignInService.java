@@ -259,7 +259,7 @@ public class SignInService implements UserDetailsService {
             return generateTokenResponseDTO;
         } else {
             log.info("message: "+ StatusCode.UNAUTHORIZED.message());
-            throw new CustomException(HttpStatus.UNAUTHORIZED, StatusCode.UNAUTHORIZED.message(), StatusCode.UNAUTHORIZED);
+            throw new CustomException(StatusCode.UNAUTHORIZED);
         }
     }
 }
