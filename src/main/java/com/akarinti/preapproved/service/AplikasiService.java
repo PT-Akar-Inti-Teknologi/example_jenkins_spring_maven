@@ -1,6 +1,7 @@
 package com.akarinti.preapproved.service;
 
-import com.akarinti.preapproved.dto.ResultPageDTO;
+import com.akarinti.preapproved.dto.MetaPaginationDTO;
+import com.akarinti.preapproved.dto.ResultDTO;
 import com.akarinti.preapproved.dto.rumahsaya.RumahSayaDTO;
 import com.akarinti.preapproved.dto.rumahsaya.RumahSayaResponseDTO;
 import com.akarinti.preapproved.jpa.entity.Aplikasi;
@@ -37,7 +38,7 @@ public class AplikasiService {
     }
 
     @Transactional
-    public ResultPageDTO getData(String search, Pageable pageable) {
+    public ResultDTO getData(String search, Pageable pageable) {
         Page<Aplikasi> aplikasiList;
         if(search != null) {
             aplikasiList = aplikasiRepository.findAll(AplikasiPredicate.aplikasiWithSearch(search), pageable);
@@ -49,7 +50,7 @@ public class AplikasiService {
         for (Aplikasi aplikasi: aplikasiList.getContent()) {
             rumahSayaDTOList.add(RumahSayaDTO.fromEntity(aplikasi));
         }
-        return new ResultPageDTO(aplikasiList, rumahSayaDTOList);
+        return new ResultDTO(new MetaPaginationDTO(aplikasiList), rumahSayaDTOList);
 
     }
 

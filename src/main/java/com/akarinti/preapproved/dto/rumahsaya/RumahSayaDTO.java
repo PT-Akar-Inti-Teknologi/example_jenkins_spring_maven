@@ -10,12 +10,17 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.*;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.UUID;
 
 @Data
 public class RumahSayaDTO {
+    @JsonProperty(value = "secure_id")
+    private String secureId;
+
     @JsonProperty(value = "norek_bca")
     @Size(max= 10)
     private String norekBca;
@@ -145,10 +150,11 @@ public class RumahSayaDTO {
     private String namaFileKtpPasangan;
 
     @JsonProperty(value = "created_time")
-    private LocalDateTime createdTime;
+    private Long createdTime;
 
     public static RumahSayaDTO fromEntity(Aplikasi aplikasi) {
         return new RumahSayaDTO(
+                aplikasi.getSecureId(),
                 aplikasi.getNorekBca(),
                 aplikasi.getNoTelpdiBca(),
                 aplikasi.getAppDataID(),
@@ -186,7 +192,8 @@ public class RumahSayaDTO {
             );
     }
 
-    public RumahSayaDTO(@Size(max = 10) String norekBca, @Size(max = 15) String noTelpdiBca, @NotNull UUID idData, @NotNull UUID idMember, @Pattern(regexp = "^[MSW]$") String statusPernikahan, @Pattern(regexp = "^[YN]$") String statusPisahHarta, String jointIncome, @Size(max = 100) String namaLengkap, @Pattern(regexp = "^[MF]$") String jenisKelamin, @Pattern(regexp = "^[A-Za-z0-9\\s]*$") @Size(max = 40) String tempatLahir, LocalDate tanggalLahir, @Size(max = 16) String nik, @Pattern(regexp = "^[A-Za-z0-9\\s]*$") @Size(max = 40) String namaGadisIbuKandung, @Pattern(regexp = "^[1-3]$") String jenisPekerjaan, @Pattern(regexp = "^[A-Za-z0-9\\s]*$") @Size(max = 100) String namaLengkapPasangan, @Pattern(regexp = "^[MF]$") String jenisKelaminPasangan, @Pattern(regexp = "^[A-Za-z0-9\\s]*$") @Size(max = 40) String tempatLahirPasangan, LocalDate tanggalLahirPasangan, @Size(max = 16) String nikPasangan, @Pattern(regexp = "^[A-Za-z0-9\\s]*$") @Size(max = 40) String namaGadisIbuKandungPasangan, Long penghasilanPemohon, Long penghasilanPasangan, Long biayaRumahTangga, @Pattern(regexp = "^C[1-4]$") String tujuanKredit, String tujuanKreditDescription, Long plafonPengajuanKpr, Float sukuBunga, @Size(max = 30) String provinsi, String idProvinsi, String kotaAtauKabupaten, @Size(max = 6) String idKotaAtauKabupaten, String namaFileKtp, String namaFileKtpPasangan, LocalDateTime createdTime) {
+    public RumahSayaDTO(String secureId, @Size(max = 10) String norekBca, @Size(max = 15) String noTelpdiBca, @NotNull UUID idData, @NotNull UUID idMember, @Pattern(regexp = "^[MSW]$") String statusPernikahan, @Pattern(regexp = "^[YN]$") String statusPisahHarta, String jointIncome, @Size(max = 100) String namaLengkap, @Pattern(regexp = "^[MF]$") String jenisKelamin, @Pattern(regexp = "^[A-Za-z0-9\\s]*$") @Size(max = 40) String tempatLahir, LocalDate tanggalLahir, @Size(max = 16) String nik, @Pattern(regexp = "^[A-Za-z0-9\\s]*$") @Size(max = 40) String namaGadisIbuKandung, @Pattern(regexp = "^[1-3]$") String jenisPekerjaan, @Pattern(regexp = "^[A-Za-z0-9\\s]*$") @Size(max = 100) String namaLengkapPasangan, @Pattern(regexp = "^[MF]$") String jenisKelaminPasangan, @Pattern(regexp = "^[A-Za-z0-9\\s]*$") @Size(max = 40) String tempatLahirPasangan, LocalDate tanggalLahirPasangan, @Size(max = 16) String nikPasangan, @Pattern(regexp = "^[A-Za-z0-9\\s]*$") @Size(max = 40) String namaGadisIbuKandungPasangan, Long penghasilanPemohon, Long penghasilanPasangan, Long biayaRumahTangga, @Pattern(regexp = "^C[1-4]$") String tujuanKredit, String tujuanKreditDescription, Long plafonPengajuanKpr, Float sukuBunga, @Size(max = 30) String provinsi, String idProvinsi, String kotaAtauKabupaten, @Size(max = 6) String idKotaAtauKabupaten, String namaFileKtp, String namaFileKtpPasangan, LocalDateTime createdTime) {
+        this.secureId = secureId;
         this.norekBca = norekBca;
         this.noTelpdiBca = noTelpdiBca;
         this.idData = idData;
@@ -220,7 +227,7 @@ public class RumahSayaDTO {
         this.idKotaAtauKabupaten = idKotaAtauKabupaten;
         this.namaFileKtp = namaFileKtp;
         this.namaFileKtpPasangan = namaFileKtpPasangan;
-        this.createdTime = createdTime;
+        this.createdTime = createdTime.toInstant(ZoneOffset.ofHours(7)).getEpochSecond();
     }
 
     public RumahSayaDTO() {

@@ -27,7 +27,7 @@ import java.util.List;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(CustomException.class)
     protected ResponseEntity<Object> customExceptionHandler(CustomException ex, WebRequest request) {
-        final ResultDTO resultDTO = new ResultDTO(ex.getErrorMessage(), null, ex.getStatusCode().codeDesc());
+        final ResultDTO resultDTO = new ResultDTO(ex.getErrorMessage(), null);
         return new ResponseEntity(resultDTO, new HttpHeaders(), ex.getStatus());
     }
 //    @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -41,12 +41,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 //        for (final FieldError error : ex.get().getFieldErrors()) {
 //
 //        }
-        final ResultDTO resultDTO = new ResultDTO(StatusCode.INVALID_JSON.message(), null, StatusCode.INVALID_JSON.codeDesc());
+        final ResultDTO resultDTO = new ResultDTO(StatusCode.INVALID_JSON, null);
         return new ResponseEntity(resultDTO, headers, status);
     }
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, @Nullable Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        final ResultDTO resultDTO = new ResultDTO(StatusCode.INVALID_ARGUMENT.message(), body, StatusCode.INVALID_ARGUMENT.codeDesc());
+        final ResultDTO resultDTO = new ResultDTO(StatusCode.INVALID_ARGUMENT, body);
         logger.info(ex.getClass().getName());
         return new ResponseEntity(resultDTO, headers, status);
     }

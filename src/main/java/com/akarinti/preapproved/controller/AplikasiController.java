@@ -1,7 +1,7 @@
 package com.akarinti.preapproved.controller;
 
 import com.akarinti.preapproved.dto.ResultDTO;
-import com.akarinti.preapproved.dto.ResultPageDTO;
+import com.akarinti.preapproved.dto.MetaPaginationDTO;
 import com.akarinti.preapproved.dto.rumahsaya.RumahSayaDTO;
 import com.akarinti.preapproved.dto.rumahsaya.RumahSayaResponseDTO;
 import com.akarinti.preapproved.service.AplikasiService;
@@ -35,7 +35,7 @@ public class AplikasiController {
     @GetMapping(value = "/rumahsaya",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultDTO> getData(@RequestParam(required = false) String search, @PageableDefault(size = 20) Pageable pageable) {
-        ResultPageDTO response = aplikasiService.getData(search, pageable);
+        ResultDTO response = aplikasiService.getData(search, pageable);
         return ResponseEntity.ok(response);
     }
 
