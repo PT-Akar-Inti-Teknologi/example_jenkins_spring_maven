@@ -1,9 +1,12 @@
 package com.akarinti.preapproved.utils.exception;
 
+import com.akarinti.preapproved.dto.StatusCodeMessageDTO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Slf4j
 public class CustomException extends RuntimeException {
@@ -23,7 +26,7 @@ public class CustomException extends RuntimeException {
         this.statusCode = statusCode;
     }
 
-    public CustomException(StatusCode statusCode, String message) {
+    public CustomException(StatusCode statusCode, StatusCodeMessageDTO message) {
         super(statusCode.message().toString());
         this.status = statusCode.httpStatus();
         this.errorMessage = message;
