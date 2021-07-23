@@ -3,21 +3,16 @@ package com.akarinti.preapproved.dto.rumahsaya;
 import com.akarinti.preapproved.jpa.entity.Aplikasi;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.*;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.UUID;
 
 @Data
 public class RumahSayaDTO {
+
     @JsonProperty(value = "secure_id")
     private String secureId;
 
@@ -152,6 +147,9 @@ public class RumahSayaDTO {
     @JsonProperty(value = "created_time")
     private Long createdTime;
 
+    @JsonProperty(value = "sisa_sl")
+    private Long sisaSL;
+
     public static RumahSayaDTO fromEntity(Aplikasi aplikasi) {
         return new RumahSayaDTO(
                 aplikasi.getSecureId(),
@@ -192,7 +190,38 @@ public class RumahSayaDTO {
             );
     }
 
-    public RumahSayaDTO(String secureId, @Size(max = 10) String norekBca, @Size(max = 15) String noTelpdiBca, @NotNull UUID idData, @NotNull UUID idMember, @Pattern(regexp = "^[MSW]$") String statusPernikahan, @Pattern(regexp = "^[YN]$") String statusPisahHarta, String jointIncome, @Size(max = 100) String namaLengkap, @Pattern(regexp = "^[MF]$") String jenisKelamin, @Pattern(regexp = "^[A-Za-z0-9\\s]*$") @Size(max = 40) String tempatLahir, LocalDate tanggalLahir, @Size(max = 16) String nik, @Pattern(regexp = "^[A-Za-z0-9\\s]*$") @Size(max = 40) String namaGadisIbuKandung, @Pattern(regexp = "^[1-3]$") String jenisPekerjaan, @Pattern(regexp = "^[A-Za-z0-9\\s]*$") @Size(max = 100) String namaLengkapPasangan, @Pattern(regexp = "^[MF]$") String jenisKelaminPasangan, @Pattern(regexp = "^[A-Za-z0-9\\s]*$") @Size(max = 40) String tempatLahirPasangan, LocalDate tanggalLahirPasangan, @Size(max = 16) String nikPasangan, @Pattern(regexp = "^[A-Za-z0-9\\s]*$") @Size(max = 40) String namaGadisIbuKandungPasangan, Long penghasilanPemohon, Long penghasilanPasangan, Long biayaRumahTangga, @Pattern(regexp = "^C[1-4]$") String tujuanKredit, String tujuanKreditDescription, Long plafonPengajuanKpr, Float sukuBunga, @Size(max = 30) String provinsi, String idProvinsi, String kotaAtauKabupaten, @Size(max = 6) String idKotaAtauKabupaten, String namaFileKtp, String namaFileKtpPasangan, LocalDateTime createdTime) {
+    public RumahSayaDTO(String secureId,
+                        @Size(max = 10) String norekBca,
+                        @Size(max = 15) String noTelpdiBca,
+                        @NotNull UUID idData,
+                        @NotNull UUID idMember,
+                        @Pattern(regexp = "^[MSW]$") String statusPernikahan,
+                        @Pattern(regexp = "^[YN]$") String statusPisahHarta,
+                        String jointIncome, @Size(max = 100) String namaLengkap,
+                        @Pattern(regexp = "^[MF]$") String jenisKelamin,
+                        @Pattern(regexp = "^[A-Za-z0-9\\s]*$") @Size(max = 40) String tempatLahir,
+                        LocalDate tanggalLahir,
+                        @Size(max = 16) String nik,
+                        @Pattern(regexp = "^[A-Za-z0-9\\s]*$") @Size(max = 40) String namaGadisIbuKandung,
+                        @Pattern(regexp = "^[1-3]$") String jenisPekerjaan,
+                        @Pattern(regexp = "^[A-Za-z0-9\\s]*$") @Size(max = 100) String namaLengkapPasangan,
+                        @Pattern(regexp = "^[MF]$") String jenisKelaminPasangan,
+                        @Pattern(regexp = "^[A-Za-z0-9\\s]*$") @Size(max = 40) String tempatLahirPasangan,
+                        LocalDate tanggalLahirPasangan, @Size(max = 16) String nikPasangan,
+                        @Pattern(regexp = "^[A-Za-z0-9\\s]*$") @Size(max = 40) String namaGadisIbuKandungPasangan,
+                        Long penghasilanPemohon,
+                        Long penghasilanPasangan,
+                        Long biayaRumahTangga,
+                        @Pattern(regexp = "^C[1-4]$") String tujuanKredit,
+                        String tujuanKreditDescription,
+                        Long plafonPengajuanKpr,
+                        Float sukuBunga,
+                        @Size(max = 30) String provinsi,
+                        String idProvinsi, String kotaAtauKabupaten,
+                        @Size(max = 6) String idKotaAtauKabupaten,
+                        String namaFileKtp,
+                        String namaFileKtpPasangan,
+                        LocalDateTime createdTime) {
         this.secureId = secureId;
         this.norekBca = norekBca;
         this.noTelpdiBca = noTelpdiBca;
