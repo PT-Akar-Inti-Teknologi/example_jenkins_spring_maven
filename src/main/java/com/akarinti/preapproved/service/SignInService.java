@@ -2,6 +2,7 @@ package com.akarinti.preapproved.service;
 
 import com.akarinti.preapproved.configuration.jwt.SessionAuthenticationProvider;
 import com.akarinti.preapproved.configuration.jwt.TokenProvider;
+import com.akarinti.preapproved.dto.StatusCodeMessageDTO;
 import com.akarinti.preapproved.dto.authentication.LogoutResponseDTO;
 import com.akarinti.preapproved.dto.authentication.ProfileUserDTO;
 import com.akarinti.preapproved.dto.authentication.SignInResponseDTO;
@@ -259,7 +260,7 @@ public class SignInService implements UserDetailsService {
             return generateTokenResponseDTO;
         } else {
             log.info("message: "+ StatusCode.UNAUTHORIZED.message());
-            throw new CustomException(StatusCode.UNAUTHORIZED);
+            throw new CustomException(StatusCode.UNAUTHORIZED, new StatusCodeMessageDTO("tidak punya akses", "unauthorized"));
         }
     }
 }
