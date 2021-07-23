@@ -2,16 +2,20 @@ package com.akarinti.preapproved.jpa.entity;
 
 import com.akarinti.preapproved.dto.rumahsaya.RumahSayaDTO;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.UUID;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "APLIKASI")
 @DynamicUpdate
@@ -121,6 +125,10 @@ public class Aplikasi extends Base {
     @ColumnDefault("false")
     private boolean serviceLevelOverdue;
 
+    @CreatedDate
+    @Column(name = "TGL_MULAI_SL")
+    private LocalDateTime tglMulaiSL;
+
     public Aplikasi() {
 
     }
@@ -196,6 +204,7 @@ public class Aplikasi extends Base {
         this.idKotaAtauKabupaten = idKotaAtauKabupaten;
         this.namaFileKtp = namaFileKtp;
         this.namaFileKtpPasangan = namaFileKtpPasangan;
+        this.tglMulaiSL = LocalDateTime.now();
     }
 
     public static Aplikasi fromDTO(RumahSayaDTO rumahSayaDTO) {
