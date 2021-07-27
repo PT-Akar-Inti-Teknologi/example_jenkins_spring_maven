@@ -23,7 +23,7 @@ import java.util.UUID;
 public class Aplikasi extends Base {
 
     @Column(name = "ID_APP_DATA")
-    private UUID appDataID;
+    private String appDataID;
 
     @Column(name = "NO_REK_BCA")
     private String norekBca;
@@ -128,6 +128,9 @@ public class Aplikasi extends Base {
     @CreatedDate
     @Column(name = "TGL_MULAI_SL")
     private LocalDateTime tglMulaiSL;
+    
+    @Column(name = "STATUS", columnDefinition = "varchar(255) default 'NEW'")
+    private String status;
 
     public Aplikasi() {
 
@@ -137,7 +140,7 @@ public class Aplikasi extends Base {
     public Aplikasi(
             String norekBca,
             String noTelpdiBca,
-            UUID idData,
+            String idData,
             UUID idMember,
             String statusPernikahan,
             String statusPisahHarta,

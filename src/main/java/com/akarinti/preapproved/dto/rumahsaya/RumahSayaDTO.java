@@ -26,7 +26,7 @@ public class RumahSayaDTO {
 
     @JsonProperty(value = "id_data")
     @NotNull
-    private UUID idData;
+    private String idData;
 
     @JsonProperty(value = "id_member")
     @NotNull
@@ -193,7 +193,7 @@ public class RumahSayaDTO {
     public RumahSayaDTO(String secureId,
                         @Size(max = 10) String norekBca,
                         @Size(max = 15) String noTelpdiBca,
-                        @NotNull UUID idData,
+                        @NotNull String idData,
                         @NotNull UUID idMember,
                         @Pattern(regexp = "^[MSW]$") String statusPernikahan,
                         @Pattern(regexp = "^[YN]$") String statusPisahHarta,
