@@ -19,24 +19,35 @@ public class AplikasiPredicate {
     public static Predicate aplikasiWithSearch(String search) {
         QAplikasi aplikasi = QAplikasi.aplikasi;
         BooleanBuilder builder = new BooleanBuilder();
-        builder.or(aplikasi.namaLengkap.like("%" + search + "%"));
+        if (search != null && !search.equalsIgnoreCase("")) {
+            builder.or(aplikasi.namaLengkap.likeIgnoreCase("%" + search + "%"));
 
-        Locale localeId = new Locale("id", "ID");
+            Locale localeId = new Locale("id", "ID");
 
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy",localeId);
-            LocalDate date = LocalDate.parse(search,formatter);
-            builder.or(aplikasi.creationDate.between(date.atStartOfDay(), date.plusDays(1).atStartOfDay()));
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy",localeId);
+                LocalDate date = LocalDate.parse(search,formatter);
+                builder.or(aplikasi.creationDate.between(date.atStartOfDay(), date.plusDays(1).atStartOfDay()));
 
-        } catch (DateTimeParseException ignored) { }
+            } catch (DateTimeParseException ignored) { }
 
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mm",localeId);
-            LocalDateTime dateTime = LocalDateTime.parse(search,formatter);
-            builder.or(aplikasi.creationDate.eq(dateTime));
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mm",localeId);
+                LocalDateTime dateTime = LocalDateTime.parse(search,formatter);
+                builder.or(aplikasi.creationDate.eq(dateTime));
 
-        } catch (DateTimeParseException ignored) { }
+            } catch (DateTimeParseException ignored) { }
 
+        }
+        return builder;
+    }
+
+    public static Predicate aplikasiWithStatus(String status) {
+        QAplikasi aplikasi = QAplikasi.aplikasi;
+        BooleanBuilder builder = new BooleanBuilder();
+        if (status != null && !status.equalsIgnoreCase("")) {
+            builder.or(aplikasi.status.equalsIgnoreCase(status));
+        }
         return builder;
     }
 }
