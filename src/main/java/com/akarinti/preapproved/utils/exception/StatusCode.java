@@ -11,13 +11,14 @@ public enum StatusCode {
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "BO-401", new StatusCodeMessageDTO("tidak punya akses", "unauthorized")),
     INVALID_JSON(HttpStatus.BAD_REQUEST, "BO-490", new StatusCodeMessageDTO("struktur atau format JSON tidak valid", "invalid JSON structure or format")),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "BO-500", new StatusCodeMessageDTO("terjadi kesalahan internal server", "internal server error")),
-    METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "BO-405", new StatusCodeMessageDTO("metode http tidak diijinkan", "http method not allowed"));
+    METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "BO-405", new StatusCodeMessageDTO("metode http tidak diijinkan", "http method not allowed")),
+    NOT_FOUND(HttpStatus.NOT_FOUND, "BO-404", new StatusCodeMessageDTO("data tidak ditemukan", "data not found"));
 
     private final HttpStatus httpStatus;
     private final String codeDesc;
     private final Object message;
 
-    private StatusCode(HttpStatus httpStatus, String codeDesc, Object message) {
+    StatusCode(HttpStatus httpStatus, String codeDesc, Object message) {
         this.httpStatus = httpStatus;
         this.codeDesc = codeDesc;
         this.message = message;

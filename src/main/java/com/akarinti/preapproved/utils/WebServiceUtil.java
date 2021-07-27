@@ -16,9 +16,6 @@ import kong.unirest.Unirest;
 import kong.unirest.UnirestException;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -28,8 +25,6 @@ import java.util.Base64;
 @Slf4j
 @Component
 public class WebServiceUtil {
-
-    public static final Logger logger = LoggerFactory.getLogger(WebServiceUtil.class);
 
     private static String loginUrl;
     @Value("${uidm.login.url}")
@@ -91,8 +86,7 @@ public class WebServiceUtil {
         String secret = clientId + ":" + clientSecret;
         byte[] secretBytes = secret.getBytes(StandardCharsets.UTF_8);
         String hash = Base64.getEncoder().encodeToString(secretBytes);
-        String result = "Basic " + hash;
-        return result;
+        return "Basic " + hash;
     }
 
     public static BCAOauth2Response getBCAOauth() {
@@ -112,8 +106,7 @@ public class WebServiceUtil {
             throw new RuntimeException("Failed to load url: " + loginUrl);
         }
 
-        BCAOauth2Response bcaOauth2Response = response.getBody();
-        return bcaOauth2Response;
+        return response.getBody();
     }
 
     @SneakyThrows
@@ -155,7 +148,7 @@ public class WebServiceUtil {
 
     @SneakyThrows
     public static UidmLogoutResponseDTO BCAUidmLogout(String userId) {
-        HttpResponse<JsonNode> response = null;
+        HttpResponse<JsonNode> response;
         UidmLogoutRequestDTO uidmLogoutRequestDTO = new UidmLogoutRequestDTO();
         uidmLogoutRequestDTO.setUserId(userId);
         try {
@@ -178,8 +171,7 @@ public class WebServiceUtil {
             throw new RuntimeException(errorMessage);
         }
         ObjectMapper objectMapper = new ObjectMapper();
-        UidmLogoutResponseDTO uidmLogoutResponseDTO = objectMapper.readValue(apiResponse, UidmLogoutResponseDTO.class);
-        return uidmLogoutResponseDTO;
+        return objectMapper.readValue(apiResponse, UidmLogoutResponseDTO.class);
     }
 
     public static String BCAUidmUserDetail(String accessToken, String timestamp, String signature, String userId) {
@@ -226,7 +218,7 @@ public class WebServiceUtil {
         UserDetailRequestDTO userDetailRequestDTO = new UserDetailRequestDTO();
         userDetailRequestDTO.setLoginSessionId(sessionId);
 
-        HttpResponse<JsonNode> response = null;
+        HttpResponse<JsonNode> response;
         try {
             Unirest.config().verifySsl(verifySsl);
             response = Unirest
@@ -248,12 +240,11 @@ public class WebServiceUtil {
             throw new RuntimeException(errorMessage);
         }
         ObjectMapper objectMapper = new ObjectMapper();
-        UserDetailResponseDTO userDetailResponseDTO = objectMapper.readValue(apiResponse, UserDetailResponseDTO.class);
-        return userDetailResponseDTO;
+        return objectMapper.readValue(apiResponse, UserDetailResponseDTO.class);
     }
 
     public HttpResponse<String> requestPutJackson(String url, String accessToken, Object payload) {
-        HttpResponse<String> response = null;
+        HttpResponse<String> response;
 
         try {
             ObjectMapper mapper = new ObjectMapper();
