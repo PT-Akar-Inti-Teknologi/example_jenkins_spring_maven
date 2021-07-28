@@ -91,7 +91,6 @@ public class HelperUtil {
                 return dur.toMinutes();
             } else if (applicationDate.after(officeStartDate) && applicationDate.before(officeEndDate)) {
                 // if application date submitted on working hour
-                log.info("-------------------B-----------------");
 //                LocalDateTime threshold = now.toInstant()
 //                        .atZone(zoneId).toLocalDateTime()
 //                        .withHour(OFFICE_HOUR_END)
@@ -101,8 +100,6 @@ public class HelperUtil {
 //                Date thresholdDate = Date.from(threshold.atZone(zoneId).toInstant());
                 LocalDateTime ldtSL = ldtApplication
                         .plusMinutes(SERVICE_LEVEL);
-                log.info("ldtSL: "+ ldtSL);
-                log.info("ldtNow: "+ ldtNow);
                 Duration dur = Duration.between(ldtNow, ldtSL);
                 return dur.toMinutes();
             }

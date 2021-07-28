@@ -39,7 +39,7 @@ public class FileUtil {
                     .asBytes()
                     .getBody();
         } catch (UnirestException e) {
-            log.info("error:: "+ e);
+            log.error("error:: "+ e);
             e.printStackTrace();
         }
         return new ByteArrayInputStream(content);

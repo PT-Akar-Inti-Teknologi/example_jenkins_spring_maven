@@ -11,7 +11,6 @@ import com.akarinti.preapproved.service.SignInService;
 import com.akarinti.preapproved.utils.exception.StatusCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -48,13 +47,6 @@ public class AuthenticationController {
         return ResponseEntity.ok(new ResultDTO(StatusCode.OK.message(), response));
     }
 
-    @PostMapping(value = "/test",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultDTO> test() {
-        return ResponseEntity.ok(new ResultDTO(StatusCode.OK.message(), "you can see this"));
-    }
-
-
     @PreAuthorize("permitAll")
     @PostMapping(value = "/generate-token",
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -62,17 +54,4 @@ public class AuthenticationController {
         GenerateTokenResponseDTO response = signInService.generateToken(signInRequestVO);
         return ResponseEntity.ok(new ResultDTO(StatusCode.OK.message(), response));
     }
-//
-//    @GetMapping(value = "/is-expired",
-//            produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ResponseEntity<ResultVO> isExpired(@RequestParam(value = "token") String accessToken){
-//        AbstractRequestHandler handler = new AbstractRequestHandler() {
-//            @Override
-//            public Object processRequest() {
-//                return signInService.isExpired(accessToken);
-//            }
-//        };
-//
-//        return handler.getResult();
-//    }
 }

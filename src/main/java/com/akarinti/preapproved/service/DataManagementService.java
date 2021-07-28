@@ -43,7 +43,7 @@ public class DataManagementService {
                 }
                 catch(Exception e)
                 {
-                    log.info("ERROR: " + e);
+                    log.error("ERROR: " + e);
                     throw new CustomException(StatusCode.INVALID_ARGUMENT, new StatusCodeMessageDTO("format tanggal salah", "invalid date format"));
                 }
                 Holiday getHoliday = holidayRepository.findByTanggal(tanggal);

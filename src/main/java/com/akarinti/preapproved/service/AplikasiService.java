@@ -91,7 +91,6 @@ public class AplikasiService {
 //            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH);
 //            String dateInString = "2021-07-21 17:00";
 //            Date date = formatter.parse(dateInString);
-//            log.info("current date: "+ date);
 
             long remainingSL = helperService.getServiceLevelRemaining(createdDate);
             RumahSayaDTO rumahSayaDTO = RumahSayaDTO.fromEntity(aplikasi);

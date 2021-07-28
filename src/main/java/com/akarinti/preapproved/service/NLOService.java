@@ -2,7 +2,7 @@ package com.akarinti.preapproved.service;
 
 import com.akarinti.preapproved.dto.nlo.RequestCBASPayloadDTO;
 import com.akarinti.preapproved.dto.nlo.RequestCBASResponseDTO;
-import com.akarinti.preapproved.utils.apiresponse.BCAErrorResponse;
+import com.akarinti.preapproved.dto.apiresponse.BCAErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;

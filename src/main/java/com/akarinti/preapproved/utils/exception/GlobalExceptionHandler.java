@@ -30,14 +30,14 @@ import java.util.List;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(CustomException.class)
     protected ResponseEntity<Object> customExceptionHandler(CustomException ex, WebRequest request) {
-        log.info("CustomException: "+ ex);
+        log.error("CustomException: "+ ex);
         final ResultDTO resultDTO = new ResultDTO(ex.getErrorMessage(), null);
         return new ResponseEntity<>(resultDTO, new HttpHeaders(), ex.getStatus());
     }
     @ExceptionHandler({Exception.class, RuntimeException.class})
     public ResponseEntity<Object> handle(HttpServletRequest req, Exception ex) {
-        log.info("internal server error: ");
-        log.info("ex: "+ ex.getClass());
+        log.error("internal server error: ");
+        log.error("ex: "+ ex.getClass());
         log.error(ex.getLocalizedMessage(), ex);
 //        if (ex instanceof NullPointerException) {
 //            final ResultDTO resultDTO = new ResultDTO(StatusCode.INVALID_ARGUMENT, ex.getMessage());
@@ -49,7 +49,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     @NonNull
     protected ResponseEntity<Object> handleHttpMessageNotReadable(@NonNull HttpMessageNotReadableException ex, @NonNull HttpHeaders headers, @NonNull HttpStatus status, @NonNull WebRequest request) {
-        log.info("handleHttpMessageNotReadable: "+ ex);
+        log.error("handleHttpMessageNotReadable: "+ ex);
         final ResultDTO resultDTO = new ResultDTO(StatusCode.INVALID_JSON, null);
         return new ResponseEntity<>(resultDTO, headers, status);
     }
@@ -59,9 +59,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @NonNull
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, @Nullable Object body, @Nullable HttpHeaders headers, @Nullable HttpStatus status, @Nullable WebRequest request) {
         ResultDTO resultDTO;
-        log.info("exception: "+ ex);
-        log.info("body: "+ body);
-        log.info("status: "+ status);
+        log.error("exception: "+ ex);
+        log.error("body: "+ body);
+        log.error("status: "+ status);
         if (ex.getClass().equals(HttpRequestMethodNotSupportedException.class)) {
             resultDTO = new ResultDTO(StatusCode.METHOD_NOT_ALLOWED, body);
         } else {
@@ -73,7 +73,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     @NonNull
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, @Nullable final HttpHeaders headers, @Nullable final HttpStatus status, @Nullable final WebRequest request) {
-        log.info("MethodArgumentNotValidException: "+ ex);
+        log.error("MethodArgumentNotValidException: "+ ex);
         final List<HashMap<String, String>> errors = new ArrayList<>();
         for (final FieldError error : ex.getBindingResult().getFieldErrors()) {
             HashMap<String, String> fieldError = new HashMap<>();

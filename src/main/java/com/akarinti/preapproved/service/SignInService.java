@@ -12,14 +12,14 @@ import com.akarinti.preapproved.dto.authentication.uidm.logout.UidmLogoutRespons
 import com.akarinti.preapproved.dto.authentication.uidm.userDetail.UserDetailResponseDTO;
 import com.akarinti.preapproved.jpa.repository.UserBCARepository;
 import com.akarinti.preapproved.utils.WebServiceUtil;
-import com.akarinti.preapproved.utils.apiresponse.BCAOauth2Response;
+import com.akarinti.preapproved.dto.apiresponse.BCAOauth2Response;
 import com.akarinti.preapproved.utils.exception.CustomException;
 import com.akarinti.preapproved.utils.exception.StatusCode;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -98,9 +98,13 @@ public class SignInService implements UserDetailsService {
     }
 
     public SignInResponseDTO loginBySession(String sessionId, String userId) {
-        //dummy, will be replaced with a real one
         if(!sessionId.equals("dummy")){
-            UserDetailResponseDTO userDetailResponseDTO = WebServiceUtil.BCAUidmUserDetailBySessionId(userId, sessionId);
+            UserDetailResponseDTO userDetailResponseDTO = null;
+            try {
+                userDetailResponseDTO = WebServiceUtil.BCAUidmUserDetailBySessionId(userId, sessionId);
+            } catch (JsonProcessingException e) {
+                log.error("exception: "+ e);
+            }
 
             final Authentication authentication = setUserAuthentication(userDetailResponseDTO, sessionId);
 
@@ -259,7 +263,7 @@ public class SignInService implements UserDetailsService {
             generateTokenResponseDTO.setAccessToken(accessToken);
             return generateTokenResponseDTO;
         } else {
-            log.info("message: "+ StatusCode.UNAUTHORIZED.message());
+            log.error("message: "+ StatusCode.UNAUTHORIZED.message());
             throw new CustomException(StatusCode.UNAUTHORIZED, new StatusCodeMessageDTO("tidak punya akses", "unauthorized"));
         }
     }

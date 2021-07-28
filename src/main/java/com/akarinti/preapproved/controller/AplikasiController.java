@@ -1,7 +1,6 @@
 package com.akarinti.preapproved.controller;
 
 import com.akarinti.preapproved.dto.ResultDTO;
-import com.akarinti.preapproved.dto.MetaPaginationDTO;
 import com.akarinti.preapproved.dto.rumahsaya.RumahSayaDTO;
 import com.akarinti.preapproved.dto.rumahsaya.RumahSayaResponseDTO;
 import com.akarinti.preapproved.service.AplikasiService;

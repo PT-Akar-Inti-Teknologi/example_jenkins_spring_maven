@@ -1,4 +1,4 @@
-package com.akarinti.preapproved.utils.apiresponse;
+package com.akarinti.preapproved.dto.apiresponse;
 
 import lombok.Data;
 
