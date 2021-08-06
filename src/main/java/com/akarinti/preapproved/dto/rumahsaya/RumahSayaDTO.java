@@ -13,142 +13,145 @@ import java.util.UUID;
 @Data
 public class RumahSayaDTO {
 
-    @JsonProperty(value = "secure_id")
+    @JsonProperty("secure_id")
     private String secureId;
 
-    @JsonProperty(value = "norek_bca")
+    @JsonProperty("norek_bca")
     @Size(max= 10)
     private String norekBca;
 
-    @JsonProperty(value = "no_telpdi_bca")
+    @JsonProperty("no_telpdi_bca")
     @Size(max= 15)
     private String noTelpdiBca;
 
-    @JsonProperty(value = "id_data")
+    @JsonProperty("id_data")
     @NotNull
     private String idData;
 
-    @JsonProperty(value = "id_member")
+    @JsonProperty("id_member")
     @NotNull
     private UUID idMember;
 
     @Pattern(regexp = "^[MSW]$")
-    @JsonProperty(value = "status_pernikahan")
+    @JsonProperty("status_pernikahan")
     private String statusPernikahan;
 
     @Pattern(regexp = "^[YN]$")
-    @JsonProperty(value = "status_pisah_harta")
+    @JsonProperty("status_pisah_harta")
     private String statusPisahHarta;
 
-    @JsonProperty(value = "joint_income")
+    @JsonProperty("joint_income")
     private String jointIncome;
 
     @Size(max = 100)
-    @JsonProperty(value = "nama_lengkap")
+    @JsonProperty("nama_lengkap")
     private String namaLengkap;
 
     @Pattern(regexp = "^[MF]$")
-    @JsonProperty(value = "jenis_kelamin")
+    @JsonProperty("jenis_kelamin")
     private String jenisKelamin;
 
     @Pattern(regexp = "^[A-Za-z0-9\\s]*$")
     @Size(max = 40)
-    @JsonProperty(value = "tempat_lahir")
+    @JsonProperty("tempat_lahir")
     private String tempatLahir;
 
-    @JsonProperty(value = "tanggal_lahir")
+    @JsonProperty("tanggal_lahir")
     @JsonFormat(pattern="yyyy-MM-dd")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate tanggalLahir;
 
     @Size(max = 16)
-    @JsonProperty(value = "nik")
+    @JsonProperty("nik")
     private String nik;
 
     @Pattern(regexp = "^[A-Za-z0-9\\s]*$")
     @Size(max = 40)
-    @JsonProperty(value = "nama_gadis_ibu_kandung")
+    @JsonProperty("nama_gadis_ibu_kandung")
     private String namaGadisIbuKandung;
 
     @Pattern(regexp = "^[1-3]$")
-    @JsonProperty(value = "jenis_pekerjaan")
+    @JsonProperty("jenis_pekerjaan")
     private String jenisPekerjaan;
 
     @Pattern(regexp = "^[A-Za-z0-9\\s]*$")
     @Size(max = 100)
-    @JsonProperty(value = "nama_lengkap_pasangan")
+    @JsonProperty("nama_lengkap_pasangan")
     private String namaLengkapPasangan;
 
     @Pattern(regexp = "^[MF]$")
-    @JsonProperty(value = "jenis_kelamin_pasangan")
+    @JsonProperty("jenis_kelamin_pasangan")
     private String jenisKelaminPasangan;
 
     @Pattern(regexp = "^[A-Za-z0-9\\s]*$")
     @Size(max = 40)
-    @JsonProperty(value = "tempat_lahir_pasangan")
+    @JsonProperty("tempat_lahir_pasangan")
     private String tempatLahirPasangan;
 
-    @JsonProperty(value = "tanggal_lahir_pasangan")
+    @JsonProperty("tanggal_lahir_pasangan")
     @JsonFormat(pattern="yyyy-MM-dd")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate tanggalLahirPasangan;
 
     @Size(max = 16)
-    @JsonProperty(value = "nik_pasangan")
+    @JsonProperty("nik_pasangan")
     private String nikPasangan;
 
     @Pattern(regexp = "^[A-Za-z0-9\\s]*$")
     @Size(max = 40)
-    @JsonProperty(value = "nama_gadis_ibu_kandung_pasangan")
+    @JsonProperty("nama_gadis_ibu_kandung_pasangan")
     private String namaGadisIbuKandungPasangan;
 
-    @JsonProperty(value = "penghasilan_pemohon")
+    @JsonProperty("penghasilan_pemohon")
     private Long penghasilanPemohon;
 
-    @JsonProperty(value = "penghasilan_pasangan")
+    @JsonProperty("penghasilan_pasangan")
     private Long penghasilanPasangan;
 
-    @JsonProperty(value = "biaya_rumah_tangga")
+    @JsonProperty("biaya_rumah_tangga")
     private Long biayaRumahTangga;
 
     @Pattern(regexp = "^C[1-4]$")
-    @JsonProperty(value = "tujuan_kredit")
+    @JsonProperty("tujuan_kredit")
     private String tujuanKredit;
 
-    @JsonProperty(value = "tujuan_kredit_description")
+    @JsonProperty("tujuan_kredit_description")
     private String tujuanKreditDescription;
 
-    @JsonProperty(value = "plafon_pengajuan_kpr")
+    @JsonProperty("plafon_pengajuan_kpr")
     private Long plafonPengajuanKpr;
 
-    @JsonProperty(value = "suku_bunga")
+    @JsonProperty("suku_bunga")
     private Float sukuBunga;
 
     @Size(max = 30)
-    @JsonProperty(value = "provinsi")
+    @JsonProperty("provinsi")
     private String provinsi;
 
-    @JsonProperty(value = "id_provinsi")
+    @JsonProperty("id_provinsi")
     private String idProvinsi;
 
-    @JsonProperty(value = "kota_atau_kabupaten")
+    @JsonProperty("kota_atau_kabupaten")
     private String kotaAtauKabupaten;
 
     @Size(max = 6)
-    @JsonProperty(value = "id_kota_atau_kabupaten")
+    @JsonProperty("id_kota_atau_kabupaten")
     private String idKotaAtauKabupaten;
 
-    @JsonProperty(value = "nama_file_ktp")
+    @JsonProperty("nama_file_ktp")
     private String namaFileKtp;
 
-    @JsonProperty(value = "nama_file_ktp_pasangan")
+    @JsonProperty("nama_file_ktp_pasangan")
     private String namaFileKtpPasangan;
 
-    @JsonProperty(value = "created_time")
+    @JsonProperty("created_time")
     private Long createdTime;
 
-    @JsonProperty(value = "sisa_sl")
+    @JsonProperty("sisa_sl")
     private Long sisaSL;
+    
+    @JsonProperty("status")
+    private String status;
 
     public static RumahSayaDTO fromEntity(Aplikasi aplikasi) {
         return new RumahSayaDTO(
@@ -186,7 +189,8 @@ public class RumahSayaDTO {
                 aplikasi.getIdKotaAtauKabupaten(),
                 aplikasi.getNamaFileKtp(),
                 aplikasi.getNamaFileKtpPasangan(),
-                aplikasi.getCreationDate()
+                aplikasi.getCreationDate(),
+                aplikasi.getStatus()
             );
     }
 
@@ -221,7 +225,9 @@ public class RumahSayaDTO {
                         @Size(max = 6) String idKotaAtauKabupaten,
                         String namaFileKtp,
                         String namaFileKtpPasangan,
-                        LocalDateTime createdTime) {
+                        LocalDateTime createdTime,
+                        String status
+                        ) {
         this.secureId = secureId;
         this.norekBca = norekBca;
         this.noTelpdiBca = noTelpdiBca;
@@ -257,6 +263,7 @@ public class RumahSayaDTO {
         this.namaFileKtp = namaFileKtp;
         this.namaFileKtpPasangan = namaFileKtpPasangan;
         this.createdTime = createdTime.toInstant(ZoneOffset.ofHours(7)).getEpochSecond();
+        this.status = status;
     }
 
     public RumahSayaDTO() {

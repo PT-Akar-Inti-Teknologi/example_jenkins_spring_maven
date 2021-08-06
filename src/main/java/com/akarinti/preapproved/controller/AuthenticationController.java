@@ -33,7 +33,7 @@ public class AuthenticationController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultDTO> logoutUser(@RequestBody UidmLogoutRequestDTO uidmLogoutRequestDTO) {
         LogoutResponseDTO response = signInService.logout(uidmLogoutRequestDTO.getUserId());
-        return ResponseEntity.ok(new ResultDTO(StatusCode.OK.message(), response));
+        return ResponseEntity.ok(new ResultDTO(response));
     }
 
     @PreAuthorize("permitAll")
@@ -44,7 +44,7 @@ public class AuthenticationController {
         if(response == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
-        return ResponseEntity.ok(new ResultDTO(StatusCode.OK.message(), response));
+        return ResponseEntity.ok(new ResultDTO(response));
     }
 
     @PreAuthorize("permitAll")
@@ -52,6 +52,6 @@ public class AuthenticationController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultDTO> generateToken(@Valid @RequestBody TokenSignInRequestDTO signInRequestVO) {
         GenerateTokenResponseDTO response = signInService.generateToken(signInRequestVO);
-        return ResponseEntity.ok(new ResultDTO(StatusCode.OK.message(), response));
+        return ResponseEntity.ok(new ResultDTO(response));
     }
 }

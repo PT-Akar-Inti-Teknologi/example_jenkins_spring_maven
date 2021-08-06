@@ -28,11 +28,14 @@ public class ResultDTO {
     }
 
     public ResultDTO(Object result) {
+        this.code = StatusCode.OK.codeDesc();
+        this.message = StatusCode.OK.message();
+        this.result = result;
     }
 
 
     public ResultDTO(StatusCode statusCode, Object result) {
-        this.code = "BO-"+ statusCode.httpStatus().value();
+        this.code =statusCode.codeDesc();
         this.message = statusCode.message();
         this.result = result;
     }

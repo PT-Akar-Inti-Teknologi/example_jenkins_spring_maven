@@ -52,4 +52,10 @@ public class ProfileUserDTO {
 
     @JsonProperty(value = "job_title_name")
     private String jobTitleName;
+
+    @JsonProperty(value = "app_code")
+    private String appCode;
+
+    @JsonProperty(value = "mobile_no")
+    private String mobileNumber;
 }

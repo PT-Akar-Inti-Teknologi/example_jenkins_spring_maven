@@ -58,8 +58,7 @@ public class DataManagementService {
                     holidayRepository.saveAndFlush(getHoliday);
                 }
             }
-        } catch (
-                IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         finally {

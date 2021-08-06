@@ -1,18 +1,32 @@
 package com.akarinti.preapproved.service;
 
+import com.akarinti.preapproved.dto.DataResponseDTO;
 import com.akarinti.preapproved.dto.MetaPaginationDTO;
 import com.akarinti.preapproved.dto.ResultDTO;
 import com.akarinti.preapproved.dto.StatusCodeMessageDTO;
+import com.akarinti.preapproved.dto.apiresponse.BCAErrorResponse;
+import com.akarinti.preapproved.dto.apiresponse.BCAOauth2Response;
+import com.akarinti.preapproved.dto.nlo.RequestCBASDTO;
+import com.akarinti.preapproved.dto.nlo.RequestCBASPayloadDTO;
+import com.akarinti.preapproved.dto.rumahsaya.ApplicationDataRequestDTO;
 import com.akarinti.preapproved.dto.rumahsaya.RumahSayaDTO;
-import com.akarinti.preapproved.dto.rumahsaya.RumahSayaResponseDTO;
+import com.akarinti.preapproved.dto.rumahsaya.RumahSayaCreateResponseDTO;
+import com.akarinti.preapproved.dto.rumahsaya.RumahSayaResponseRequestDTO;
 import com.akarinti.preapproved.jpa.entity.Aplikasi;
+import com.akarinti.preapproved.jpa.entity.SLIK;
+import com.akarinti.preapproved.jpa.entity.UserBCA;
 import com.akarinti.preapproved.jpa.predicate.AplikasiPredicate;
 import com.akarinti.preapproved.jpa.repository.AplikasiRepository;
+import com.akarinti.preapproved.jpa.repository.SLIKRepository;
 import com.akarinti.preapproved.utils.FileUtil;
 import com.akarinti.preapproved.utils.HelperUtil;
+import com.akarinti.preapproved.utils.WebServiceUtil;
 import com.akarinti.preapproved.utils.exception.CustomException;
 import com.akarinti.preapproved.utils.exception.StatusCode;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.BooleanBuilder;
+import kong.unirest.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -22,21 +36,27 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.apache.commons.io.FileUtils;
 
-import java.io.File;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
+
+import static com.akarinti.preapproved.jpa.entity.QAplikasi.aplikasi;
 
 @Slf4j
 @Service
 @Transactional
 public class AplikasiService {
+
+    @Value("${rumahsaya.clientId}")
+    String rumahSayaClientId;
+
+    @Value("${rumahsaya.url}")
+    String rumahSayaUrl;
 
     @Value("${hcp.url}")
     String hcpUrl;
@@ -50,12 +70,80 @@ public class AplikasiService {
     @Autowired
     FileUtil fileUtil;
 
+    @Autowired
+    SignInService signInService;
+
+    @Autowired
+    NLOService nloService;
+
+    @Autowired
+    SLIKRepository SLIKRepository;
+
     @Transactional
-    public RumahSayaResponseDTO createData(RumahSayaDTO rumahSayaDTO) {
+    public RumahSayaCreateResponseDTO createData(RumahSayaDTO rumahSayaDTO) {
         Aplikasi aplikasi = Aplikasi.fromDTO(rumahSayaDTO);
         aplikasiRepository.save(aplikasi);
 
-        return new RumahSayaResponseDTO();
+        return new RumahSayaCreateResponseDTO(true);
+    }
+
+    private void requestCBAS(RequestCBASDTO dataDTO, String secureIdAplikasi) {
+        UserBCA userBCA = signInService.getUser();
+        Aplikasi aplikasi = aplikasiRepository.findBySecureId(secureIdAplikasi);
+        log.info("aplikasi: "+ aplikasi);
+        if (aplikasi != null) {
+            // TODO: generate random requestId
+            String requestId = String.valueOf(new Date().getTime());
+            String appType = "CCOS";
+            String product = "BOPAKPR";
+            String custType = "A";
+            String name1 = dataDTO.getName();
+            String gender = dataDTO.getGender();
+
+            LocalDate tglLahir = dataDTO.getDob();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            String dob = tglLahir.format(formatter);
+
+            String ktp = dataDTO.getKtp();
+
+            RequestCBASPayloadDTO requestCBASPayloadDTO = RequestCBASPayloadDTO.fromEntity(requestId, appType, product, custType, name1, gender, dob, ktp);
+
+            NLOService.requestCBAS(requestCBASPayloadDTO);
+
+            SLIK slik = new SLIK();
+            slik.setAplikasi(aplikasi);
+            slik.setRequestId(requestId);
+            slik.setUserBCA(userBCA);
+            slik.setPemohon(dataDTO.isApplicant());
+            slik.setTglRequest(LocalDate.now());
+            SLIKRepository.save(slik);
+        }
+    }
+
+    @Transactional
+    public DataResponseDTO processApplication(ApplicationDataRequestDTO applicationDataRequestDTO) {
+
+        Aplikasi aplikasi = aplikasiRepository.findBySecureId(applicationDataRequestDTO.getSecureId());
+        if (aplikasi == null) throw new CustomException(StatusCode.NOT_FOUND, new StatusCodeMessageDTO("data aplikasi tidak ditemukan", "application data not found"));
+
+        RequestCBASDTO dataDTO = RequestCBASDTO.fromEntity(aplikasi.getNamaLengkap(), aplikasi.getJenisKelamin(), aplikasi.getTanggalLahir(), aplikasi.getNik(), true);
+        requestCBAS(dataDTO, applicationDataRequestDTO.getSecureId());
+
+        boolean hasSpouse = (!aplikasi.getNamaLengkapPasangan().isEmpty() && aplikasi.getTanggalLahirPasangan() != null && !aplikasi.getNikPasangan().isEmpty());
+        if (hasSpouse) {
+            RequestCBASDTO dataSpouseDTO = RequestCBASDTO.fromEntity(aplikasi.getNamaLengkapPasangan(), aplikasi.getJenisKelaminPasangan(), aplikasi.getTanggalLahirPasangan(), aplikasi.getNikPasangan(), false);
+            requestCBAS(dataSpouseDTO, applicationDataRequestDTO.getSecureId());
+        }
+        aplikasi.setStatus("PENDING_CBAS");
+        aplikasiRepository.save(aplikasi);
+
+        DataResponseDTO dataResponseDTO = new DataResponseDTO(true);
+        return dataResponseDTO;
+    }
+
+    public DataResponseDTO rejectApplication(ApplicationDataRequestDTO applicationDataRequestDTO) {
+        DataResponseDTO dataResponseDTO = new DataResponseDTO(true);
+        return dataResponseDTO;
     }
 
     @SneakyThrows
@@ -116,7 +204,6 @@ public class AplikasiService {
             fileUrl.append("/");
             fileUrl.append(fileName);
             InputStream inputStream = fileUtil.getFileHCP(fileUrl.toString());
-            // TODO: determine content type from file name
             String contentType = "application/octet-stream";
             resultMap.put("contentType", contentType);
 
@@ -128,6 +215,53 @@ public class AplikasiService {
             //Logger.getLogger(WebCrawler.class.getName()).log(Level.SEVERE, null, ex);a
         }
         return resultMap;
+    }
+
+    public ResultDTO overview() {
+        long statusNew = aplikasiRepository.countByStatusIgnoreCase("NEW");
+        long statusPending = aplikasiRepository.countByStatusIgnoreCase("PENDING_CBAS");
+        long statusError = aplikasiRepository.countByStatusIgnoreCase("ERROR_CBAS");
+
+        HashMap<String, Long> overview = new HashMap<>();
+        overview.put("new", statusNew);
+        overview.put("pending", statusPending);
+        overview.put("error", statusError);
+        return new ResultDTO(overview);
+    }
+
+    public void responseRumahSaya(RumahSayaResponseRequestDTO rumahSayaResponseRequestDTO) {
+        BCAOauth2Response bcaOauth2Response = WebServiceUtil.getBCAOauth();
+        String authorization = "Bearer " + bcaOauth2Response.getAccess_token();
+        log.info("authorization: "+ authorization);
+
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonBody = null;
+        try {
+            jsonBody = mapper.writeValueAsString(rumahSayaResponseRequestDTO);
+        } catch (Exception e) {
+            log.error("ERROR");
+        }
+        HttpResponse<JsonNode> response = null;
+        try {
+            Unirest.config().verifySsl(WebServiceUtil.getVerifySSL());
+            response = Unirest
+                    .post(rumahSayaUrl)
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", authorization)
+                    .header("client-id", rumahSayaClientId)
+                    .body(jsonBody)
+                    .asJson();
+            String apiResponse = response.getBody().toString();
+            if (response.getStatus() != 200) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                BCAErrorResponse bcaErrorResponse = objectMapper.readValue(apiResponse, BCAErrorResponse.class);
+                String errorMessage = (String) bcaErrorResponse.getError_message().get("indonesian");
+                throw new RuntimeException(errorMessage);
+            }
+        } catch (UnirestException | JsonProcessingException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to load url: " + rumahSayaUrl);
+        }
     }
 
 }

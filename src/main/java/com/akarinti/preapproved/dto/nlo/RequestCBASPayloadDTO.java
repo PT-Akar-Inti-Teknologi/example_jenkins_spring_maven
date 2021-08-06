@@ -1,7 +1,11 @@
 package com.akarinti.preapproved.dto.nlo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 
+@Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RequestCBASPayloadDTO {
 
     @JsonProperty(value="request_id")
@@ -66,5 +70,21 @@ public class RequestCBASPayloadDTO {
 
     @JsonProperty(value="req_purpose")
     private String reqPurpose;
+
+    public static RequestCBASPayloadDTO fromEntity(String requestId, String appType, String product, String custType, String name1, String gender, String dob, String ktp) {
+        return new RequestCBASPayloadDTO(requestId, appType, product, custType, name1, gender, dob, ktp);
+    }
+
+    public RequestCBASPayloadDTO(String requestId, String appType, String product, String custType, String name1, String gender, String dob, String ktp) {
+        this.requestId = requestId;
+        this.appType = appType;
+        this.product = product;
+        this.custType = custType;
+        this.name1 = name1;
+        this.gender = gender;
+        this.dob = dob;
+        this.ktp = ktp;
+        this.company = "0";
+    }
 
 }

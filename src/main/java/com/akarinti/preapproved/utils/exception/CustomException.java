@@ -22,7 +22,7 @@ public class CustomException extends RuntimeException {
     public CustomException(StatusCode statusCode) {
         super(statusCode.message().toString());
         this.status = statusCode.httpStatus();
-        this.errorMessage = statusCode.message().toString();
+        this.errorMessage = statusCode.message();
         this.statusCode = statusCode;
     }
 

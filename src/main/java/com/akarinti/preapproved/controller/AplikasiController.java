@@ -1,8 +1,10 @@
 package com.akarinti.preapproved.controller;
 
+import com.akarinti.preapproved.dto.DataResponseDTO;
 import com.akarinti.preapproved.dto.ResultDTO;
+import com.akarinti.preapproved.dto.rumahsaya.ApplicationDataRequestDTO;
 import com.akarinti.preapproved.dto.rumahsaya.RumahSayaDTO;
-import com.akarinti.preapproved.dto.rumahsaya.RumahSayaResponseDTO;
+import com.akarinti.preapproved.dto.rumahsaya.RumahSayaCreateResponseDTO;
 import com.akarinti.preapproved.service.AplikasiService;
 import com.akarinti.preapproved.utils.exception.StatusCode;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +35,21 @@ public class AplikasiController {
     @PostMapping(value = "/rumahsaya",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultDTO> createData(@Valid @RequestBody RumahSayaDTO rumahSayaDTO) {
-        RumahSayaResponseDTO response = aplikasiService.createData(rumahSayaDTO);
+        RumahSayaCreateResponseDTO response = aplikasiService.createData(rumahSayaDTO);
+        return ResponseEntity.ok(new ResultDTO(StatusCode.OK.message(), response));
+    }
+
+    @PostMapping(value = "/proses",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResultDTO> processApplication(@Valid @RequestBody ApplicationDataRequestDTO applicationDataRequestDTO) {
+        DataResponseDTO response = aplikasiService.processApplication(applicationDataRequestDTO);
+        return ResponseEntity.ok(new ResultDTO(StatusCode.OK.message(), response));
+    }
+
+    @PostMapping(value = "/reject",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResultDTO> rejectApplication(@Valid @RequestBody ApplicationDataRequestDTO applicationDataRequestDTO) {
+        DataResponseDTO response = aplikasiService.rejectApplication(applicationDataRequestDTO);
         return ResponseEntity.ok(new ResultDTO(StatusCode.OK.message(), response));
     }
 
@@ -75,6 +91,12 @@ public class AplikasiController {
 
         response.flushBuffer();
         inputStream.close();
+    }
+
+    @GetMapping(value = "/overview", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResultDTO> overview() {
+        ResultDTO response = aplikasiService.overview();
+        return ResponseEntity.ok(response);
     }
 
 }

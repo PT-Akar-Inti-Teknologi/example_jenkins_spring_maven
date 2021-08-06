@@ -1,18 +1,19 @@
 package com.akarinti.preapproved.service;
 
+import com.akarinti.preapproved.dto.apiresponse.BCAOauth2Response;
 import com.akarinti.preapproved.dto.nlo.RequestCBASPayloadDTO;
 import com.akarinti.preapproved.dto.nlo.RequestCBASResponseDTO;
 import com.akarinti.preapproved.dto.apiresponse.BCAErrorResponse;
+import com.akarinti.preapproved.utils.WebServiceUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kong.unirest.HttpResponse;
-import kong.unirest.JsonNode;
-import kong.unirest.Unirest;
-import kong.unirest.UnirestException;
+import kong.unirest.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 @Slf4j
+@Service
 public class NLOService {
     private static String appAccessKey;
     @Value("${nlo.appAccessKey}")
@@ -34,22 +35,26 @@ public class NLOService {
 
     @SneakyThrows
     public static RequestCBASResponseDTO requestCBAS(RequestCBASPayloadDTO requestCBASPayloadDTO) {
+        BCAOauth2Response bcaOauth2Response = WebServiceUtil.getBCAOauth();
+        String authorization = "Bearer " + bcaOauth2Response.getAccess_token();
+
         ObjectMapper mapper = new ObjectMapper();
-        String jsonInString = null;
+        String jsonBody = null;
         try {
-            jsonInString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(requestCBASPayloadDTO);
+            jsonBody = mapper.writeValueAsString(requestCBASPayloadDTO);
         } catch (Exception e) {
             log.error("ERROR");
         }
         HttpResponse<JsonNode> response = null;
         try {
-//            Unirest.config().verifySsl(verifySsl);
+            Unirest.config().verifySsl(WebServiceUtil.getVerifySSL());
             response = Unirest
                     .post(cbasUrl)
                     .header("Content-Type", "application/json")
+                    .header("Authorization", authorization)
                     .header("app-access-key", appAccessKey)
                     .header("app-source", appSource)
-                    .body(jsonInString)
+                    .body(jsonBody)
                     .asJson();
         } catch (UnirestException e) {
             e.printStackTrace();
@@ -63,7 +68,6 @@ public class NLOService {
             throw new RuntimeException(errorMessage);
         }
         ObjectMapper objectMapper = new ObjectMapper();
-        RequestCBASResponseDTO requestCBASResponseDTO = objectMapper.readValue(apiResponse, RequestCBASResponseDTO.class);
-        return requestCBASResponseDTO;
+        return objectMapper.readValue(apiResponse, RequestCBASResponseDTO.class);
     }
 }

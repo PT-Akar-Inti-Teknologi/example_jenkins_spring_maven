@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-public class RumahSayaResponseDTO {
-    @JsonProperty(value = "success")
-    private Boolean success = true;
+public class ApplicationDataRequestDTO {
 
+    @JsonProperty(value = "secure_id")
+    private String secureId;
 }

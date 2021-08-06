@@ -1,12 +1,14 @@
 package com.akarinti.preapproved.jpa.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.Cache;
 import javax.persistence.*;
 import java.util.Date;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "HOLIDAY")
 @DynamicUpdate

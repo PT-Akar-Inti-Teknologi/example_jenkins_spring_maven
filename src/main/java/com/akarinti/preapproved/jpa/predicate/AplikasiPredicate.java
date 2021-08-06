@@ -25,14 +25,14 @@ public class AplikasiPredicate {
             Locale localeId = new Locale("id", "ID");
 
             try {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy",localeId);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy", localeId);
                 LocalDate date = LocalDate.parse(search,formatter);
                 builder.or(aplikasi.creationDate.between(date.atStartOfDay(), date.plusDays(1).atStartOfDay()));
 
             } catch (DateTimeParseException ignored) { }
 
             try {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mm",localeId);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy HH:mm:ss", localeId);
                 LocalDateTime dateTime = LocalDateTime.parse(search,formatter);
                 builder.or(aplikasi.creationDate.eq(dateTime));
 

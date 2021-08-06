@@ -13,7 +13,8 @@ This project is providing API service using Java Springboot for the Back Office 
 
 ## Technologies Used
 - Java - version 1.8
-- Springboot - verision 2.5.2
+- Springboot - version 2.5.2
+- Postgres 12
 
 ## Setup
 

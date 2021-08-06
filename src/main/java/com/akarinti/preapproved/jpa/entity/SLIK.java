@@ -1,36 +1,39 @@
 package com.akarinti.preapproved.jpa.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "RESPON_NLO")
+@Table(name = "SLIK")
 @DynamicUpdate
 @Data
-public class ResponNLO extends Base {
+public class SLIK extends Base {
 
     @Column(name = "REQUEST_ID")
-    private boolean requestId;
+    private String requestId;
 
     @Column(name = "PEMOHON")
     private boolean isPemohon;
 
     @Column(name = "TGL_REQUEST")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date tglRequest;
+    private LocalDate tglRequest;
 
     @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(name = "USER_BCA_ID")
     private UserBCA userBCA;
 
     @ManyToOne(fetch= FetchType.LAZY)
-    @JoinColumn(name = "RUMAHSAYA_ID")
-    private Aplikasi rumahSaya;
+    @JoinColumn(name = "APLIKASI_ID")
+    private Aplikasi aplikasi;
 
     // do we need to define per field or save as json?
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
     @Column(name = "JSON_SLIK")
     private String jsonSLIK;
 

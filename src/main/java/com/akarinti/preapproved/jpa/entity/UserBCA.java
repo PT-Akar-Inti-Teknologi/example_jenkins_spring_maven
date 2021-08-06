@@ -1,10 +1,12 @@
 package com.akarinti.preapproved.jpa.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "USER_BCA")
 @DynamicUpdate
@@ -17,11 +19,17 @@ public class UserBCA extends Base {
     @Column(name = "FULL_NAME", nullable = false, length = 256)
     private String fullName;
 
+    @Column(name = "EMAIL", nullable = false)
+    private String email;
+
+    @Column(name = "ROLE")
+    private String role;
+
+    @Column(name = "PASSWORD", length = 128)
+    private String password;
+
     @Column(name = "PHONE_NUMBER", length = 32)
     private String phoneNumber;
-
-    @Column(name = "EXTENSION")
-    private String extension;
 
     @Column(name = "OFFICE_CODE", length = 32)
     private String officeCode;
@@ -46,5 +54,11 @@ public class UserBCA extends Base {
 
     @Column(name = "JOB_TITLE_NAME")
     private String jobTitleName;
+
+    @Column(name = "APP_CODE")
+    private String appCode;
+
+    @Column(name = "MOBILE_NO")
+    private String mobileNumber;
 
 }

@@ -106,6 +106,10 @@ public class WebServiceUtil {
 
     private static final Boolean verifySsl = false;
 
+    public static boolean getVerifySSL() {
+        return verifySsl;
+    }
+
     private static String getBasicAuth(String clientId, String clientSecret) {
         String secret = clientId + ":" + clientSecret;
         byte[] secretBytes = secret.getBytes(StandardCharsets.UTF_8);
@@ -365,31 +369,4 @@ public class WebServiceUtil {
         String profileInternal = node.get("output_schema").toString();
         return objectMapper.readValue(profileInternal, UserDetailResponseDTO.class);
     }
-
-    public HttpResponse<String> requestPutJackson(String url, String accessToken, Object payload) {
-        HttpResponse<String> response;
-
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            String jsonInString = mapper.writeValueAsString(payload);
-            String authorization = "Bearer " + accessToken;
-            Unirest.config().verifySsl(verifySsl);
-            response = Unirest.put(url)
-//                    .header("apikey", apikey)
-                    .header("authorization", authorization)
-                    .header("app-access-key","e4i-1n7-EAI8-Mx3")
-                    .header("app-source","EAI-INT")
-                    .body(jsonInString)
-                    .asString();
-        } catch (UnirestException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Failed to load url: " + url);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Json processing error");
-        }
-        return response;
-    }
-
-
 }
