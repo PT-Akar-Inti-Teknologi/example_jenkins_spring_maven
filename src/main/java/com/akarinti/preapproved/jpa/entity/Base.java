@@ -18,12 +18,9 @@ import java.util.UUID;
  * Base entity class
  */
 @MappedSuperclass
-//@EntityListeners(AuditingEntityListener.class)    // Must be temporarily commented when unit testing with Junit (otherwise Exception: sun.reflect.annotation.TypeNotPresentExceptionProxy)
 @DynamicUpdate
 @Data
 public abstract class Base implements Serializable {
-
-	private static final long serialVersionUID = -7369920601847524273L;
 
 	protected Base() {
 	}
@@ -43,17 +40,9 @@ public abstract class Base implements Serializable {
 	@Column(name = "DATE_CREATED", updatable = false)
 	private LocalDateTime creationDate;
 
-    @CreatedBy
-    @Column(name = "CREATED_BY", length = 30, updatable = false)
-    private String createdBy;
-
     @LastModifiedDate
     @Column(name = "DATE_MODIFIED")
     private LocalDateTime modificationDate;
-
-    @LastModifiedBy
-    @Column(name = "MODIFIED_BY", length = 30)
-    private String modifiedBy;
 
 	@Version
 	@Column(name = "VERSION")
