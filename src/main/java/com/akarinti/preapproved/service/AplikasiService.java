@@ -12,10 +12,12 @@ import com.akarinti.preapproved.dto.rumahsaya.ApplicationDataRequestDTO;
 import com.akarinti.preapproved.dto.rumahsaya.RumahSayaDTO;
 import com.akarinti.preapproved.dto.rumahsaya.RumahSayaCreateResponseDTO;
 import com.akarinti.preapproved.dto.rumahsaya.RumahSayaResponseRequestDTO;
+import com.akarinti.preapproved.jpa.entity.ActivityLog;
 import com.akarinti.preapproved.jpa.entity.Aplikasi;
 import com.akarinti.preapproved.jpa.entity.SLIK;
 import com.akarinti.preapproved.jpa.entity.UserBCA;
 import com.akarinti.preapproved.jpa.predicate.AplikasiPredicate;
+import com.akarinti.preapproved.jpa.repository.ActivityLogRepository;
 import com.akarinti.preapproved.jpa.repository.AplikasiRepository;
 import com.akarinti.preapproved.jpa.repository.SLIKRepository;
 import com.akarinti.preapproved.utils.FileUtil;
@@ -29,6 +31,7 @@ import com.querydsl.core.BooleanBuilder;
 import kong.unirest.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.User;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -65,6 +68,9 @@ public class AplikasiService {
     AplikasiRepository aplikasiRepository;
 
     @Autowired
+    ActivityLogRepository activityLogRepository;
+
+    @Autowired
     HelperUtil helperService;
 
     @Autowired
@@ -72,9 +78,6 @@ public class AplikasiService {
 
     @Autowired
     SignInService signInService;
-
-    @Autowired
-    NLOService nloService;
 
     @Autowired
     SLIKRepository SLIKRepository;
@@ -87,8 +90,7 @@ public class AplikasiService {
         return new RumahSayaCreateResponseDTO(true);
     }
 
-    private void requestCBAS(RequestCBASDTO dataDTO, String secureIdAplikasi) {
-        UserBCA userBCA = signInService.getUser();
+    private void requestCBAS(RequestCBASDTO dataDTO, String secureIdAplikasi, UserBCA userBCA) {
         Aplikasi aplikasi = aplikasiRepository.findBySecureId(secureIdAplikasi);
         log.info("aplikasi: "+ aplikasi);
         if (aplikasi != null) {
@@ -122,26 +124,46 @@ public class AplikasiService {
 
     @Transactional
     public DataResponseDTO processApplication(ApplicationDataRequestDTO applicationDataRequestDTO) {
-
+        UserBCA userBCA = signInService.getUser();
         Aplikasi aplikasi = aplikasiRepository.findBySecureId(applicationDataRequestDTO.getSecureId());
         if (aplikasi == null) throw new CustomException(StatusCode.NOT_FOUND, new StatusCodeMessageDTO("data aplikasi tidak ditemukan", "application data not found"));
 
         RequestCBASDTO dataDTO = RequestCBASDTO.fromEntity(aplikasi.getNamaLengkap(), aplikasi.getJenisKelamin(), aplikasi.getTanggalLahir(), aplikasi.getNik(), true);
-        requestCBAS(dataDTO, applicationDataRequestDTO.getSecureId());
+        requestCBAS(dataDTO, applicationDataRequestDTO.getSecureId(), userBCA);
 
         boolean hasSpouse = (!aplikasi.getNamaLengkapPasangan().isEmpty() && aplikasi.getTanggalLahirPasangan() != null && !aplikasi.getNikPasangan().isEmpty());
         if (hasSpouse) {
             RequestCBASDTO dataSpouseDTO = RequestCBASDTO.fromEntity(aplikasi.getNamaLengkapPasangan(), aplikasi.getJenisKelaminPasangan(), aplikasi.getTanggalLahirPasangan(), aplikasi.getNikPasangan(), false);
-            requestCBAS(dataSpouseDTO, applicationDataRequestDTO.getSecureId());
+            requestCBAS(dataSpouseDTO, applicationDataRequestDTO.getSecureId(), userBCA);
         }
         aplikasi.setStatus("PENDING_CBAS");
         aplikasiRepository.save(aplikasi);
+
+        ActivityLog activityLog = new ActivityLog();
+        activityLog.setUserBCA(userBCA);
+        activityLog.setAplikasi(aplikasi);
+        activityLog.setStatus("PROCESSED");
+        activityLogRepository.save(activityLog);
 
         DataResponseDTO dataResponseDTO = new DataResponseDTO(true);
         return dataResponseDTO;
     }
 
     public DataResponseDTO rejectApplication(ApplicationDataRequestDTO applicationDataRequestDTO) {
+        UserBCA userBCA = signInService.getUser();
+        Aplikasi aplikasi = aplikasiRepository.findBySecureId(applicationDataRequestDTO.getSecureId());
+        if (aplikasi == null) throw new CustomException(StatusCode.NOT_FOUND, new StatusCodeMessageDTO("data aplikasi tidak ditemukan", "application data not found"));
+
+        RumahSayaResponseRequestDTO rumahSayaResponseRequestDTO = new RumahSayaResponseRequestDTO();
+        rumahSayaResponseRequestDTO.setFlag("Data dan KTP tidak sesuai");
+        responseRumahSaya(rumahSayaResponseRequestDTO);
+
+        ActivityLog activityLog = new ActivityLog();
+        activityLog.setUserBCA(userBCA);
+        activityLog.setAplikasi(aplikasi);
+        activityLog.setStatus("REJECTED");
+        activityLogRepository.save(activityLog);
+
         DataResponseDTO dataResponseDTO = new DataResponseDTO(true);
         return dataResponseDTO;
     }
@@ -235,13 +257,14 @@ public class AplikasiService {
         log.info("authorization: "+ authorization);
 
         ObjectMapper mapper = new ObjectMapper();
-        String jsonBody = null;
+        String jsonBody;
         try {
             jsonBody = mapper.writeValueAsString(rumahSayaResponseRequestDTO);
         } catch (Exception e) {
-            log.error("ERROR");
+            log.error("ERROR: "+ e);
+            throw new CustomException(StatusCode.INTERNAL_SERVER_ERROR);
         }
-        HttpResponse<JsonNode> response = null;
+        HttpResponse<JsonNode> response;
         try {
             Unirest.config().verifySsl(WebServiceUtil.getVerifySSL());
             response = Unirest
@@ -264,4 +287,19 @@ public class AplikasiService {
         }
     }
 
+    public DataResponseDTO retryErrorCBAS() {
+       List<Aplikasi> aplikasiList = aplikasiRepository.findAllByStatusIgnoreCase("ERROR_CBAS");
+
+       for(Aplikasi aplikasi: aplikasiList) {
+           ApplicationDataRequestDTO applicationDataRequestDTO = new ApplicationDataRequestDTO();
+           applicationDataRequestDTO.setSecureId(aplikasi.getSecureId());
+
+           DataResponseDTO dataResponseDTO = processApplication(applicationDataRequestDTO);
+           log.info("dataReponseDTO: "+ dataResponseDTO);
+       }
+
+        DataResponseDTO dataResponseDTO = new DataResponseDTO();
+        dataResponseDTO.setSuccess(true);
+        return dataResponseDTO;
+    }
 }
