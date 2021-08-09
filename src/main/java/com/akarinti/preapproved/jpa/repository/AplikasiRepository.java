@@ -10,4 +10,5 @@ import java.util.List;
 public interface AplikasiRepository extends BaseRepository<Aplikasi>, QuerydslPredicateExecutor<Aplikasi> {
     long countByStatusIgnoreCase(String status);
     long countByStatusIn(List<String> status);
+    List<Aplikasi> findAllByStatusIgnoreCase(String status);
 }
