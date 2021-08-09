@@ -34,6 +34,9 @@ public class Aplikasi extends Base {
     @Column(name = "ID_MEMBER")
     private UUID idMember;
 
+    @Column(name = "EMAIL")
+    private String email;
+
     @Column(name = "STATUS_PERNIKAHAN")
     private String statusPernikahan;
 
@@ -142,6 +145,7 @@ public class Aplikasi extends Base {
             String noTelpdiBca,
             String idData,
             UUID idMember,
+            String email,
             String statusPernikahan,
             String statusPisahHarta,
             String jointIncome,
@@ -178,6 +182,7 @@ public class Aplikasi extends Base {
         this.noTelpdiBca = noTelpdiBca;
         this.appDataID = idData;
         this.idMember = idMember;
+        this.email = email;
         this.statusPernikahan = statusPernikahan;
         this.statusPisahHarta = statusPisahHarta;
         this.jointIncome = jointIncome;
@@ -216,6 +221,7 @@ public class Aplikasi extends Base {
                 rumahSayaDTO.getNoTelpdiBca(),
                 rumahSayaDTO.getIdData(),
                 rumahSayaDTO.getIdMember(),
+                rumahSayaDTO.getEmail(),
                 rumahSayaDTO.getStatusPernikahan(),
                 rumahSayaDTO.getStatusPisahHarta(),
                 rumahSayaDTO.getJointIncome(),
