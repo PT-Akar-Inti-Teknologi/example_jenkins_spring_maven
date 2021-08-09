@@ -32,6 +32,10 @@ public class RumahSayaDTO {
     @NotNull
     private UUID idMember;
 
+    @JsonProperty("email")
+    @NotNull
+    private String email;
+
     @Pattern(regexp = "^[MSW]$")
     @JsonProperty("status_pernikahan")
     private String statusPernikahan;
