@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -95,7 +96,6 @@ public class ActivityLogService {
         }  else {
             activityLogs = activityLogRepository.findAll(sort);
         }
-        log.info("activityLogs: "+ activityLogs);
 
         List<Object[]> rowData = new ArrayList<>();
         Locale id = new Locale("in", "ID");
@@ -124,7 +124,24 @@ public class ActivityLogService {
         String fileName = "ACTIVITY_LOG_"+ formattedDate+ ".xlsx";
 
         List<String[]> listHeader = new ArrayList<>();
+
+        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", id);
+        String[] strings = date.split(" - ");
+        String dateFrom = strings[0];
+        String dateTo = strings[1];
+        LocalDate dateToLD = LocalDate.parse(dateTo, formatter);
+        LocalDate dateFromLD = LocalDate.parse(dateFrom, formatter);
+
+        DateTimeFormatter formatterHeader = DateTimeFormatter.ofPattern("dd MMMM yyyy", id);
+        String formattedDateFrom = dateFromLD.format(formatterHeader);
+        String formattedDateTo = dateToLD.format(formatterHeader);
+
+
         listHeader.add(new String[] {
+                formattedDateFrom+ " - "+ formattedDateTo,
+        });
+        listHeader.add(new String[] {
+                "No",
                 "Tanggal Waktu", // 0
                 "Nama Nasabah", // 1
                 "Email Nasabah", // 2

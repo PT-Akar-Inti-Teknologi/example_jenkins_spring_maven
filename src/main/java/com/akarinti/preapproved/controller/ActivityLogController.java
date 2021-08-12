@@ -60,7 +60,8 @@ public class ActivityLogController {
         IOUtils.copy(inputStream, response.getOutputStream());
 
         response.flushBuffer();
-        file.deleteOnExit();
+        file.delete();
+//        file.deleteOnExit();
         inputStream.close();
     }
 
