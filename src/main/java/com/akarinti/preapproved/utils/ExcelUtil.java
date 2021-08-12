@@ -4,6 +4,7 @@ import com.akarinti.preapproved.utils.exception.CustomException;
 import com.akarinti.preapproved.utils.exception.StatusCode;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.batik.dom.svg.ListHandler;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
@@ -34,10 +35,6 @@ public class ExcelUtil {
             Workbook wb = new XSSFWorkbook();
 
             CellStyle headerStyle = headerStyle(wb);
-            CellStyle textStyle = textStyle(wb);
-            CellStyle numberStyle = numberStyle(wb);
-            CellStyle dateStyle = dateStyle(wb);
-            CellStyle boldTextStyle = boldTextStyle(wb);
             CellStyle textStyleBordered = textStyleBordered(wb);
             CellStyle numberStyleBordered = numberStyleBordered(wb);
             CellStyle dateStyleBordered = dateStyleBordered(wb);
@@ -54,22 +51,18 @@ public class ExcelUtil {
                 }
 
                 // sheet add header
-                if(listHeader.size() > i) {
-                    String[] headerSheet = listHeader.get(i);
+                for(String[] headerSheet: listHeader) {
                     if (headerSheet != null) {
                         // loop header column
                         Row headerRow = sheet.createRow(rowIdx);
-                        Cell cell = headerRow.createCell(0);
-                        cell.setCellStyle(headerStyle);
-                        cell.setCellValue("No");
-
-                        for (int k = 1; k <= headerSheet.length; k++) {
+                        for (int k = 0; k < headerSheet.length; k++) {
                             // loop column
                             Cell nextCell = headerRow.createCell(k);
                             nextCell.setCellStyle(headerStyle);
-                            nextCell.setCellValue(headerSheet[k-1]);
+                            nextCell.setCellValue(headerSheet[k]);
                             sheet.autoSizeColumn(k);
                         }
+                        rowIdx++;
                     }
                 }
 
@@ -79,7 +72,6 @@ public class ExcelUtil {
                     if (dataSheet != null) {
                         for (int j = 0; j < dataSheet.size(); j++) {
                             // loop row
-                            rowIdx++;
                             Row nextRow = sheet.createRow(rowIdx);
 
                             Object[] data = dataSheet.get(j);
@@ -109,8 +101,8 @@ public class ExcelUtil {
                                 }
                                 sheet.autoSizeColumn(k);
                             }
+                            rowIdx++;
                         }
-                        rowIdx++;
                     }
                 }
 
