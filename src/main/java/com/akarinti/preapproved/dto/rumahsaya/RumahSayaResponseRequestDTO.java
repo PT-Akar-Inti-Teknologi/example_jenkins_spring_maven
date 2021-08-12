@@ -10,25 +10,19 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class RumahSayaResponseRequestDTO {
     @JsonProperty(value = "plafon_terpilih")
-    private double plafonTerpilih;
+    private Double plafonTerpilih;
 
     @JsonProperty(value = "flag")
     private String flag;
-
-    @JsonProperty(value = "tenor")
-    private String tenor;
 
     @JsonProperty(value = "masa_berlaku")
     private String masaBerlaku;
 
     @JsonProperty(value = "plafon_kemampuan")
-    private double plafonKemampuan;
+    private Double plafonKemampuan;
 
     @JsonProperty(value = "plafon_matriks")
-    private double plafonMatriks;
-
-    @JsonProperty(value = "angsuran")
-    private String angsuran;
+    private Double plafonMatriks;
 
     @JsonProperty(value = "kode_pengajuan")
     private String kodePengajuan;

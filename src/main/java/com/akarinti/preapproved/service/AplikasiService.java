@@ -27,11 +27,11 @@ import com.akarinti.preapproved.utils.exception.CustomException;
 import com.akarinti.preapproved.utils.exception.StatusCode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.querydsl.core.BooleanBuilder;
 import kong.unirest.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -145,8 +145,7 @@ public class AplikasiService {
         activityLog.setStatus("PROCESSED");
         activityLogRepository.save(activityLog);
 
-        DataResponseDTO dataResponseDTO = new DataResponseDTO(true);
-        return dataResponseDTO;
+        return new DataResponseDTO(true);
     }
 
     public DataResponseDTO rejectApplication(ApplicationDataRequestDTO applicationDataRequestDTO) {
@@ -155,7 +154,11 @@ public class AplikasiService {
         if (aplikasi == null) throw new CustomException(StatusCode.NOT_FOUND, new StatusCodeMessageDTO("data aplikasi tidak ditemukan", "application data not found"));
 
         RumahSayaResponseRequestDTO rumahSayaResponseRequestDTO = new RumahSayaResponseRequestDTO();
-        rumahSayaResponseRequestDTO.setFlag("Data dan KTP tidak sesuai");
+        // TODO: update flag
+        //        rumahSayaResponseRequestDTO.setFlag("Data dan KTP tidak sesuai");
+        rumahSayaResponseRequestDTO.setFlag("REJECTED");
+        rumahSayaResponseRequestDTO.setAppDataId(aplikasi.getAppDataID());
+
         responseRumahSaya(rumahSayaResponseRequestDTO);
 
         ActivityLog activityLog = new ActivityLog();
@@ -164,8 +167,9 @@ public class AplikasiService {
         activityLog.setStatus("REJECTED");
         activityLogRepository.save(activityLog);
 
-        DataResponseDTO dataResponseDTO = new DataResponseDTO(true);
-        return dataResponseDTO;
+        aplikasi.setStatus("REJECTED");
+
+        return new DataResponseDTO(true);
     }
 
     @SneakyThrows
@@ -254,7 +258,6 @@ public class AplikasiService {
     public void responseRumahSaya(RumahSayaResponseRequestDTO rumahSayaResponseRequestDTO) {
         BCAOauth2Response bcaOauth2Response = WebServiceUtil.getBCAOauth();
         String authorization = "Bearer " + bcaOauth2Response.getAccess_token();
-        log.info("authorization: "+ authorization);
 
         ObjectMapper mapper = new ObjectMapper();
         String jsonBody;
@@ -279,6 +282,15 @@ public class AplikasiService {
                 ObjectMapper objectMapper = new ObjectMapper();
                 BCAErrorResponse bcaErrorResponse = objectMapper.readValue(apiResponse, BCAErrorResponse.class);
                 String errorMessage = (String) bcaErrorResponse.getError_message().get("indonesian");
+                throw new RuntimeException(errorMessage);
+            }
+            ObjectMapper objectMapper = new ObjectMapper();
+            ObjectNode node = objectMapper.readValue(apiResponse, ObjectNode.class);
+            com.fasterxml.jackson.databind.JsonNode errorSchema = node.get("error_schema");
+            String errorCode = errorSchema.get("error_code").toString();
+            if (!errorCode.equals("WBF-00-000")) {
+                String errorMessage = errorSchema.get("error_message").get("indonesian").toString();
+                log.info("errorMessage: "+ errorMessage);
                 throw new RuntimeException(errorMessage);
             }
         } catch (UnirestException | JsonProcessingException e) {
