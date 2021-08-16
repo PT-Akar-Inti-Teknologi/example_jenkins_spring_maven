@@ -1,0 +1,150 @@
+{
+  "name": "PlatformGenerator",
+  "namespace": "com.akarinti.preapproved.schema.avsc",
+  "type": "record",
+  "fields": [
+    {
+      "name": "appDataId",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "nama",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "norek",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "jenisPekerjaan",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "gender",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "tempatLahir",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "tanggalLahir",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "nik",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "namaGadisIbuKandung",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "namaPasangan",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "genderPasangan",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "tempatLahirPasangan",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "tanggalLahirPasangan",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "nikPasangan",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "namaGadisIbuKandungPasangan",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "slikRequestDate",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "slikRequestDatePasangan",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "slikRequestUser",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "slikRequestUserPasangan",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "penghasilan",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "penghasilanPasangan",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "pengeluaran",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "tujuanKredit",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "kota",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "plafonPengajuan",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "sukuBunga",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "jsonDataSLIK",
+      "type": ["null", "string"],
+	    "default": null
+    },
+    {
+      "name": "jsonDataSLIKPasangan",
+      "type": [
+        "null",
+        "int"
+      ],
+        "default": null
+    }
+  ]
+}
