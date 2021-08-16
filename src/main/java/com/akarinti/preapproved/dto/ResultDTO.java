@@ -35,13 +35,13 @@ public class ResultDTO {
 
 
     public ResultDTO(StatusCode statusCode, Object result) {
-        this.code =statusCode.codeDesc();
+        this.code = statusCode.codeDesc();
         this.message = statusCode.message();
         this.result = result;
     }
 
-    public ResultDTO(Object message, Object result) {
-        this.code = "BO-"+ HttpStatus.OK.value();
+    public ResultDTO(StatusCode statusCode, Object message, Object result) {
+        this.code = statusCode.codeDesc();
         this.message = message;
         this.result = result;
     }

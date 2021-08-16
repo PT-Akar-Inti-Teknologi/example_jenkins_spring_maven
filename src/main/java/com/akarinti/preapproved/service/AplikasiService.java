@@ -1,5 +1,6 @@
 package com.akarinti.preapproved.service;
 
+import com.akarinti.preapproved.dto.BCA.BCAResponseDTO;
 import com.akarinti.preapproved.dto.DataResponseDTO;
 import com.akarinti.preapproved.dto.MetaPaginationDTO;
 import com.akarinti.preapproved.dto.ResultDTO;
@@ -285,11 +286,9 @@ public class AplikasiService {
                 throw new RuntimeException(errorMessage);
             }
             ObjectMapper objectMapper = new ObjectMapper();
-            ObjectNode node = objectMapper.readValue(apiResponse, ObjectNode.class);
-            com.fasterxml.jackson.databind.JsonNode errorSchema = node.get("error_schema");
-            String errorCode = errorSchema.get("error_code").toString();
-            if (!errorCode.equals("WBF-00-000")) {
-                String errorMessage = errorSchema.get("error_message").get("indonesian").toString();
+            BCAResponseDTO bcaResponseDTO = objectMapper.readValue(apiResponse, BCAResponseDTO.class);
+            if (!bcaResponseDTO.getErrorSchema().getErrorCode().equals("WBF-00-000")) {
+                String errorMessage = bcaResponseDTO.getErrorSchema().getErrorMessage().getIndonesian().toString();
                 log.info("errorMessage: "+ errorMessage);
                 throw new RuntimeException(errorMessage);
             }

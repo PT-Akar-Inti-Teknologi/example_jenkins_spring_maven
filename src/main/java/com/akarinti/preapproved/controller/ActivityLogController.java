@@ -27,7 +27,7 @@ public class ActivityLogController {
 
     @GetMapping(value = "/list",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResultDTO> getData(@RequestParam(required = false) String search,
+    public ResponseEntity<ResultDTO> getList(@RequestParam(required = false) String search,
                                              @RequestParam(required = false) String status,
                                              @RequestParam(required = false) String date,
                                              @PageableDefault(size = 20) Pageable pageable) {
@@ -37,7 +37,7 @@ public class ActivityLogController {
 
     @GetMapping(value = "/download",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public void downloadSurveyReport(
+    public void downloadReport(
             HttpServletResponse response,
             @RequestParam(required = false) String search,
             @RequestParam(required = false) String status,

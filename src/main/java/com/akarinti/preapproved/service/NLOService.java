@@ -1,16 +1,27 @@
 package com.akarinti.preapproved.service;
 
+import com.akarinti.preapproved.dto.StatusCodeMessageDTO;
 import com.akarinti.preapproved.dto.apiresponse.BCAOauth2Response;
 import com.akarinti.preapproved.dto.nlo.RequestCBASPayloadDTO;
 import com.akarinti.preapproved.dto.nlo.RequestCBASResponseDTO;
 import com.akarinti.preapproved.dto.apiresponse.BCAErrorResponse;
+import com.akarinti.preapproved.jpa.entity.SLIK;
+import com.akarinti.preapproved.jpa.repository.SLIKRepository;
 import com.akarinti.preapproved.utils.WebServiceUtil;
+import com.akarinti.preapproved.utils.exception.CustomException;
+import com.akarinti.preapproved.utils.exception.StatusCode;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import kong.unirest.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -32,6 +43,9 @@ public class NLOService {
     public void setCbasUrl(String cbasUrl) {
         NLOService.cbasUrl = cbasUrl;
     }
+
+    @Autowired
+    SLIKRepository slikRepository;
 
     @SneakyThrows
     public static RequestCBASResponseDTO requestCBAS(RequestCBASPayloadDTO requestCBASPayloadDTO) {
@@ -69,5 +83,25 @@ public class NLOService {
         }
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.readValue(apiResponse, RequestCBASResponseDTO.class);
+    }
+
+    @Transactional
+    public HashMap<String, String> submitResponse(String headerAppAccessKey, Map<String, Object> requestBody) {
+        if (!headerAppAccessKey.equals(appAccessKey)) throw new CustomException(StatusCode.UNAUTHORIZED);
+        String requestId = (String) requestBody.get("request_id");
+        SLIK slik = slikRepository.findTopByRequestId(requestId);
+        if (slik == null) throw new CustomException(StatusCode.NOT_FOUND, new StatusCodeMessageDTO("request_id tidak ditemukan", "request_id not found"));
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            String json = mapper.writeValueAsString(requestBody.get("data"));
+            slik.setJsonSLIK(json);
+            slikRepository.saveAndFlush(slik);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        HashMap<String, String> response = new HashMap<>();
+        response.put("request_id", requestId);
+        return response;
     }
 }

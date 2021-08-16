@@ -8,7 +8,6 @@ import com.akarinti.preapproved.dto.authentication.token.GenerateTokenResponseDT
 import com.akarinti.preapproved.dto.authentication.token.TokenSignInRequestDTO;
 import com.akarinti.preapproved.dto.authentication.uidm.logout.UidmLogoutRequestDTO;
 import com.akarinti.preapproved.service.SignInService;
-import com.akarinti.preapproved.utils.exception.StatusCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

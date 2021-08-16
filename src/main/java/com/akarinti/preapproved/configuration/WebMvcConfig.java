@@ -47,6 +47,7 @@ public class WebMvcConfig extends WebSecurityConfigurerAdapter implements WebMvc
                 .antMatchers("/api/auth/login").permitAll()
                 .antMatchers("/api/trigger/**").permitAll()
                 .antMatchers("/api/auth/generate-token").permitAll()
+                .antMatchers("/api/nlo/slik-response").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/aplikasi/rumahsaya").permitAll()
                 .anyRequest().authenticated()
                 .and()

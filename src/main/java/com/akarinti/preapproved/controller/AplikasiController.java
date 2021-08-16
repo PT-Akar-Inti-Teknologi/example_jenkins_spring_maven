@@ -36,21 +36,21 @@ public class AplikasiController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultDTO> createData(@Valid @RequestBody RumahSayaDTO rumahSayaDTO) {
         RumahSayaCreateResponseDTO response = aplikasiService.createData(rumahSayaDTO);
-        return ResponseEntity.ok(new ResultDTO(StatusCode.OK.message(), response));
+        return ResponseEntity.ok(new ResultDTO(StatusCode.OK, response));
     }
 
     @PostMapping(value = "/proses",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultDTO> processApplication(@Valid @RequestBody ApplicationDataRequestDTO applicationDataRequestDTO) {
         DataResponseDTO response = aplikasiService.processApplication(applicationDataRequestDTO);
-        return ResponseEntity.ok(new ResultDTO(StatusCode.OK.message(), response));
+        return ResponseEntity.ok(new ResultDTO(StatusCode.OK, response));
     }
 
     @PostMapping(value = "/reject",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResultDTO> rejectApplication(@Valid @RequestBody ApplicationDataRequestDTO applicationDataRequestDTO) {
         DataResponseDTO response = aplikasiService.rejectApplication(applicationDataRequestDTO);
-        return ResponseEntity.ok(new ResultDTO(StatusCode.OK.message(), response));
+        return ResponseEntity.ok(new ResultDTO(StatusCode.OK, response));
     }
 
     @GetMapping(value = "/rumahsaya",
@@ -72,7 +72,7 @@ public class AplikasiController {
         HttpHeaders headers = new HttpHeaders();
         headers.setCacheControl(CacheControl.noCache().getHeaderValue());
 
-        ResultDTO resultDTO = new ResultDTO(StatusCode.OK.message(), map);
+        ResultDTO resultDTO = new ResultDTO(StatusCode.OK, map);
         ResponseEntity<ResultDTO> responseEntity = new ResponseEntity<>(resultDTO, headers, HttpStatus.OK);
         return responseEntity;
     }
