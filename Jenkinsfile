@@ -11,6 +11,26 @@ pipeline {
         sh 'mvn -Dmaven.test.failure.ignore=true install'
       }
     }
+
+    stage('Sonarqube analysis') {
+      environment {
+        scannerHome = tool 'sonarqube-scanner'
+      }
+
+      steps {
+        withSonarQubeEnv(installationName: 'sonarqube') {
+          sh '$scannerHome/bin/sonar-scanner'
+        }
+      }
+    }
+
+    stage('Quality Gate') {
+      steps {
+        timeout(time: 1, unit: 'HOURS') {
+          waitForQualityGate abortPipeline: true
+        }
+      }
+    }
   }
 
   post {
