@@ -14,13 +14,14 @@ pipeline {
     }
 
     stage('Sonarqube analysis') {
-      environment {
-        scannerHome = tool 'sonarqube-scanner'
-      }
+      // environment {
+      //   scannerHome = tool 'sonarqube-scanner'
+      // }
 
       steps {
         withSonarQubeEnv(installationName: 'sonarqube') {
-          sh '$scannerHome/bin/sonar-scanner'
+          // sh '$scannerHome/bin/sonar-scanner'
+          sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.7.0.1746:sonar'
         }
       }
     }
