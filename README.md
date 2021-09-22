@@ -1,33 +1,31 @@
-# BCA Preapproved Java
+# Spring Boot Jenkins Example
 
-BCA preapproved backend service using Java Springboot as framework
+Sample project to demonstrate how to use Jenkins & SonarQube in Spring Boot.
 
 ## Table of Contents
-* [General Information](#general-information)
-* [Technologies Used](#technologies-used)
-* [Setup](#setup)
-* [Developers](#developers)
+
+- [General Information](#general-information)
+- [Technologies Used](#technologies-used)
+- [Setup](#setup)
 
 ## General Information
-This project is providing API service using Java Springboot for the Back Office system. BO system need to integrate with other BCA services, such as UIDM form user authentication, Rumahsaya as data source, NLO, Kafka, etc
+
+- This sample project uses Jenkins' built in tools to build and test a typical Spring Boot project
+- Please see `Jenkinsfile` and `sonar-project.properties` as a reference
 
 ## Technologies Used
-- Java - version 1.8
-- Springboot - version 2.5.2
-- Postgres 12
+
+- Spring Boot 2.5.2
+- JDK 8
+- Spring Boot Test with Junit 5
 
 ## Setup
 
-Dependency
-- Java 1.8
-- Maven
-- Spring boot
+### Development
 
-Compile / Build
-- To compile and run in local computer, use `mvn spring-boot:run`
-- To build this project, use `mvn clean install -DskipTests`
+- `./mvnw clean verify`
+- `./mvnw spring-boot:run`
 
-## Developers
+### Test
 
-- Andrew - [andrew@akarinti.tech](mailto:andrew@akarinti.tech)
-- Jo - [johanes@akarinti.tech](mailto:johanes@akarinti.tech)
+- `./mvnw test`
